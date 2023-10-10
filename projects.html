@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Stellar by HTML5 UP</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="main.css" />
+		<noscript><link rel="stylesheet" href="noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+		<div id="wrapper">
+
+			<!-- Header -->
+				<header id="header">
+					<h1>OpenCV Computer Vision Project</h1>
+					
+				</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul>
+							<li><a href="#intro" class="active">Introduction</a></li>
+							<li><a href="#first">First Section</a></li>
+							<li><a href="#second">Second Section</a></li>
+							<li><a href="#cta">Get Started</a></li>
+						</ul>
+					</nav>
+
+				<!-- Main -->
+				
+					<div id="main">
+
+						<!-- Introduction -->
+							<section id="intro" class="main">
+								<div class="spotlight">
+									<div class="content">
+										<header class="major">
+											<h2>FireArm Ai</h2>
+										</header>
+										<p>After witnessing the devastating Uvalde shooting shortly after my high school graduation in May, I was deeply distressed. It was heartbreaking to see young lives filled with potential abruptly cut short. Motivated by the desire to make a difference, I dedicated my entire summer to seeking ways to prevent such tragedies. Eventually, I came up with an idea that could potentially save lives. My solution involves creating a camera that utilizes OpenCV, a computer vision library, to detect firearms. When the camera detects an individual carrying a gun, it will immediately trigger an alarm and simultaneously contact local law enforcement. This system aims to provide students with valuable extra time to seek cover and increase their chances of survival. To develop this innovative technology, I undertook the task of training an AI model using over 60,000 images. Using a toy gun, I constructed my own Image Classifier, which served as a starting point. However, for the model to be more accurate and reliable, it is crucial to train it with real firearms data. This is where I require the support and collaboration of the community. The process of creating AI Cascade models involves training a computer model with a vast dataset of images to teach it how to identify specific objects or features within those images. This intricate process entails breaking down the detection problem into smaller, simpler components and creating classifiers for each part. Ultimately, these classifiers are combined into a cascade to effectively detect the desired object—in this case, firearms. Developing an accurate and dependable model demands a substantial investment of time, effort, and resources.</p>
+										<ul class="actions">
+											<li><a href="https://docs.opencv.org/3.4/dc/d88/tutorial_traincascade.html" class="button">Learn More</a></li>
+										</ul>
+									</div>
+									<span class="image"><img src="images/pic01.jpg" alt="" /></span>
+								</div>
+							</section>
+
+						<!-- First Section -->
+							<section id="first" class="main special">
+								<header class="major">
+									<h2>Reasons why I created this Project !</h2>
+								</header>
+								<video class="image-container" controls autoplay loop muted>
+									<source src="AiModelClip.mp4" type="video/mp4" alt="Image 2">
+									This browser does not display the video tag.
+								  </video>
+								<div class="image-container">
+									<img src="shell.png" alt="Image 1">
+								</div>
+								
+								<div class="image-container">
+									<img src="parts.jpg" alt="Image 2">
+								</div>
+								
+								
+								<ul class="features">
+									<li>
+										<span class="icon solid major style1 fa-code"></span>
+										<h3>Project Grit & Goals</h3>
+										<p>On May 24, 2022, 18-year old Salvador Ramos freely entered onto Robb Elementary School to fatally shoot nineteen students and two teachers. The victims were closing in on their last few weeks of school, until Ramos’s AR-15 rifle devastatingly murdered and injured dozens of innocent children. On May 26, just two days later, I sat at my graduation ceremony among 600 other high school graduates. While we were finally finishing our secondary education, the victims of the Uvlade, Texas shooting had barely began theirs. It was heartbreaking to believe that those students, less than eight years later, would’ve been in the same cap and gown I was wearing. Unfortunately, this is the reality for the children of the American Education System. I was hit with the hard realization that America had a mass shooting epidemic that was not only affecting the general public, but our country’s future generation. I dedicated the following Summer to finding a solution to this problem. With my passion for coding and technology, I decided on creating a camera with an AI to detect firearms. I began the project by creating my own camera from scratch. I designed and 3D printed the camera shell for my ESP-32 modular and soldered an external rechargeable battery pack. Then, I programmed the camera to capture live video feed. I would use this to script a Python program to combine my AI cascade to detect when an individual is carrying a gun. I trained my AI model with over 60,000 images of replica fire arms and constructed my own image Classifier with a toy gun. As my project continues, the camera will be able to trigger an alarm upon detection of a firm to contact local law enforcement,</p>
+									</li>
+									<li>
+										<span class="icon major style3 fa-copy"></span>
+										<h3></h3>
+										<p></p>
+									</li>
+									<li>
+										<span class="icon major style5 fa-gem"></span>
+										<h3>What is a Cascade ?</h3>
+										<p>In 2001, a groundbreaking approach in Machine Learning was founded called "Rapid Object Detection using a Boosted Cascade of Simple Features" discovered by Paul Viola and Michael Jones. The goal was to detect objects with the help of machine learning, it was successful. Their work introduced the Viola-Jones algorithm, which revolutionized the field of object detection and had a significant impact on computer vision and machine learning. This approach paved the way for advancements in object recognition tasks. Now, let me explain this in a way that doesn't require technical engineering knowledge. Imagine you want to teach a computer how to detect a person holding a firearm in live video stream. This approach is a type of machine learning that helps the computer recognize these firearms accurately. To train the computer, we need lots of pictures with many types of firearms (positive images) and pictures without weapons (negative images). The first step is to create a special function, known as a cascade, which the computer will learn from the training images. This function will help the computer identify firearms in other live video streams. To make the cascade function effective, we need to extract certain characteristics or features from the training images. These features are called Haar features, which are similar to filters or patterns used in image processing. Each Haar feature represents a particular aspect of a Gun. Here's how the Haar features work: Imagine a rectangular shape, split into two smaller rectangles—one white and one black. We calculate a single value for each feature by subtracting the sum of the pixels inside the white rectangle from the sum of the pixels inside the black rectangle. These values help the computer understand the distinguishing characteristics of a firearm. By training the cascade function with positive and negative images, and using the Haar features to analyze the images, the computer can then detect many types of firearms in during a live video stream with a good level of accuracy.</p>
+									</li>
+								</ul>
+								<footer class="major">
+									<ul class="actions special">
+										<li><a href="https://docs.opencv.org/3.4/dc/d88/tutorial_traincascade.html" class="button">Learn More</a></li>
+									</ul>
+								</footer>
+							</section>
+
+						<!-- Second Section -->
+							<section id="second" class="main special">
+								<header class="major">
+									<ul>
+									<h2>Python Code:</h2>
+									<li>import cv2</li>  
+									<li>import urllib.request</li>
+									<li></li>
+									<li>firearm_cascade = cv2.CascadeClassifier("/Users/zximy/Desktop/cascade.xml")</li>
+									<li>url='http://192.168.0.108/640x480.jpg'</li>
+									<li>cv2.namedWindow("SCANNING AREA", cv2.WINDOW_AUTOSIZE)</li>
+									<li>while True:</li>
+									<li>videoResponse = urllib.request.urlopen(url)</li>
+									<li>gundetected=firearm_cascade.detectMultiScale(gray,scaleFactor=12,minNeighbors=26)</li>
+									<li>for x, y, w, h in gundetected:   </li>
+									<li>videostream = cv2.rectangle(videostream, (x, y), (x+w, y+h), (0, 0, 255), 3)           </li>
+									<li>cv2.imshow("Scanning", videostream)</li>
+									<li>Key  = cv2.waitKey(5)</li>
+									<li>if key == ord('q'):</li>
+									<li>break</li>
+
+								</ul>
+
+
+
+
+							
+									
+													
+
+								</header>
+								<ul class="statistics">
+									<li class="style1">
+										<span class="icon solid fa-code-branch"></span>
+										<strong>2,057 K-12 shooting incidents</strong> Since 1970
+									</li>
+									<li class="style2">
+										<span class="icon fa-folder-open"></span>
+										<strong>680 Fatalities and 1,926 Injuries </strong>
+									</li>
+									<li class="style3">
+										<span class="icon solid fa-signal"></span>
+										<strong> Even amidst the peak of the COVID-19 pandemic, 2021 recorded the highest number of incidents, with 249 occurrences involving Americans.</strong> 
+									</li>
+									<li class="style4">
+										<span class="icon solid fa-laptop"></span>
+										<strong>The most common location for a school shooting is in a parking lot (22.6%)</strong> followed by inside a classroom (9.8%)
+									</li>
+									<li class="style5">
+										<span class="icon fa-gem"></span>
+										<strong>The most common time of year for a school shooting is in the fall (40%).
+										</strong> 
+									</li>
+								</ul>
+								<p class="content">In the wake of the ongoing pandemic, there has been a concerning rise in mental health issues among young individuals. Simultaneously, there has been an alarming increase in incidents involving weapons being found within school premises. To counter this, several school districts have implemented, or are contemplating, drastic measures to curb the entry of weapons. These steps range from prohibiting backpacks to installing metal detectors in middle schools. Shocking incidents that were previously unimaginable, such as a six-year-old bringing a gun to school and shooting a teacher, have sadly become a reality.</p>
+								<footer class="major">
+									<ul class="actions special">
+										<li><a href="generic.html" class="button">Learn More</a></li>
+									</ul>
+								</footer>
+							</section>
+
+						<!-- Get Started -->
+		<!-- 			<section id="cta" class="main special">
+							<header class="major">
+								<h2>C</h2>
+								
+								</header>
+								
+								<footer class="major">
+									<ul class="actions special">
+										<li><a href="generic.html" class="button primary">Get Started</a></li>
+										<li><a href="generic.html" class="button">Learn More</a></li>
+										-->
+									</ul>
+								</footer>
+							</section>
+
+					</div>
+	
+				<!-- Footer -->
+					<footer id="footer">
+						<section>
+							<h2>FireArm Ai</h2>
+							<p>Developed a Cascade Model using Computer Vision that can Detect if a individual is holding an Firearm. </p>
+							<ul class="actions">
+								<li><a href="https://github.com/ZeshanHussain" class="button">Learn More</a></li>
+							</ul>
+						</section>
+						<section>
+							<h2>My Socials</h2>
+							<dl class="alt">
+								<dt>Instagram</dt>
+								<dd> <li><a href =  "https://www.instagram.com/zeshzz" class ="button">Zeshzz</a></li></dd>
+				
+								<dt>Email</dt>
+								<dd><a href="#">hussaiz7220@student.laccd.edu
+								</a></dd>
+							</dl>
+						
+						</section>
+						<p class="copyright">&copy; Developed by Zeshan Hussain</p>
+					</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
