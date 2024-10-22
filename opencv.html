@@ -1,0 +1,257 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="/style.css" type="text/css"/>
+        <title>Seeing Danger: How AI-Based Computer Vision Detects Firearms to Boost Security</title>
+    </head>
+    <body>
+        <header class='header'>
+            <a class="logo" href="index.html">home</a>
+            <nav>
+                <a href="https://www.github.com/ZeshanHussain">github</a>
+                <a href="/about">about</a>
+            </nav>
+        </header>
+        <div class="container">
+            <h1 class="title">
+                Seeing Danger: How AI-Based Computer Vision Detects Firearms to Boost Security
+        <br>
+                <span class="subtitle"></span>
+            </h1>
+            <ul class="tags">
+                <li>
+                    <a href="/tags/c++">c++</a>
+                </li>
+                <li>
+                    <a href="/tags/opencv">opencv</a>
+                </li>
+            </ul>
+            <p>
+                Using computer vision can be very useful in many situations it is designed for. In May 2022, just a few weeks after a devastating mass shooting, I was pissed off and wanted to find ways to help save lives in an active threat situation.                <sup class="footnote-reference">
+                    <a id="footnote-reference-1" href="#footnote-1">1</a>
+                </sup>
+                
+            </p>
+            <hr>
+            <p>
+              
+            </p>
+            <ul>
+                <li>Using OpenCV framework to train my model</li>
+                <li>Collected over 10,000 images of a prop handgun to simulate & train </li>
+            </ul>
+            <hr>
+            <p>Machine Leaning Model Handgun Detection</p>
+            <div class="src src-bash">
+                <div class="highlight">
+                    <pre style="background-color:#fff;">
+                        <code>
+                            <img src="Screenshot .png" alt="Italian Trulli">
+
+                            <span style="display:flex;">
+                                <span>
+</span> 
+
+<video width="920" height="840" autoplay loop muted>
+    <source src="typeshit.MOV" type="video/mp4" />
+  </video>
+
+
+
+ 
+
+
+                            </span>
+                            <span style="display:flex">
+                                
+                                <video width="920" height="840" autoplay loop muted>
+                                    <source src="movie.mp4" type="video/mp4" />
+                                  </video>
+                                      </span>
+                            </span>
+                            <span style="display:flex;">
+                                <span>
+                                    
+                                    
+                                </span>
+                              
+                            </span>
+                            <span style="display:flex;">
+                                <span>&gt;&gt;&gt;</span>
+                            </span>
+                        </code>
+                    </pre>
+                </div>
+            </div>
+            <p>How it works:</p>
+            <ol>
+                <li>Collect Postive and Negative Datasets for Machine learning task</li>
+                <li>After Training, deploy the cascade file into the C++ program</li>
+                <li>My C++ program consists of using the OpenCV framework. Using this framework helped me create a clear goal for object detection.</li>
+                
+            </ol>
+            <p>And yup, that works. But not without jumping through a few hoops:</p>
+            <ul>
+                <li>
+                    We can use this basic technology to save many lives. During active threat situations on school grounds, the attacker often comes from an entry point around the school, which can catch staff, teachers, and students off guard. Having a detection system can cut response time in half and save many lives. In situations like this, every second really matters. 
+                    <div class="src src-bash">
+                        <div class="highlight">
+                            <pre style="background-color:#fff;">
+                                <code>
+                                    <span style="display:flex;">
+                                        
+  <span style="color:#4300ec">#include</span> <span style="color:#48a8e4"> opencv2/opencv.hpp </span> </span><span style="color:#4300ec">#include</span> <span style="color:#48a8e4">opencv2/highgui/highgui.hpp </span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">opencv2/imgproc/imgproc.hpp </span></span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">iostream </span></span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">opencv2/objdetect/objdetect.hpp </span>   </span>
+
+<span style="color:#ee8300">using namespace std; </span>
+<span style="color:#ee8300">using namespace cv;</span>
+
+<span style="color:#711eb5"> 
+void VideoStream() {
+    CascadeClassifier firearm_cascade;
+    firearm_cascade.load("/Users/zximy/Desktop/Stage1Firearm.xml"); /* Haar Cascade file */
+    
+    String url = "http://192.168.1.118/640x480.jpg";
+    
+    namedWindow("SCANNING AREA", WINDOW_AUTOSIZE);
+
+    while (true) {
+    VideoCapture videoResponse(url);
+
+    Mat videostream;
+    videoResponse >> videostream;
+
+    Mat gray;
+    cvtColor(videostream, gray, COLOR_BGR2GRAY);
+
+    vector<Rect> gundetected;
+    firearm_cascade.detectMultiScale(gray, gundetected, 12, 26);
+
+    for (const Rect& rect : gundetected) {
+        rectangle(videostream, rect, Scalar(0, 0, 255), 3);
+    }
+
+    imshow("Scanning", videostream);
+
+    char key = waitKey(5);
+
+    if (key == 'q') {
+        break;
+    }
+    }
+    }
+    int main() {
+    VideoStream();
+
+    return 0;
+}
+
+</span>
+
+
+
+
+                                    
+
+                                    <span style="display:flex;">
+                                        <span>
+                                           
+                                        </span>
+                                    </span>
+                                    <span style="display:flex;">
+                                        <span>
+  
+                                        </span>
+                                    </span>
+                                    <span style="display:flex;">
+                                        <span>
+                                            
+                                        </span>
+                                    </span>
+                                </code>
+                            </pre>
+                        </div>
+                    </div>
+                    <p>
+                  
+            <p>For now it works well enough - lets build GuardianSafe. Type shit.</p>
+            <div id="outline-container-headline-1" class="outline-2">
+                <h2 id="headline-1">Footnotes
+</h2>
+            </div>
+            <div class="footnotes">
+                <hr class="footnotes-separatator">
+                <div class="footnote-definitions">
+                    <div class="footnote-definition">
+                        <sup id="footnote-1">
+                            <a href="#footnote-reference-1">1</a>
+                        </sup>
+                        <div class="footnote-body">
+                            <p>Rest in peace to all the lives lost in the Uvalde shooting. It was surreal sitting at my high school graduation just a few weeks after the shooting, knowing an entire generation of young souls took rounds from high-caliber rifle. That bastard shooter tortured those kids to death. Burn in hell, Salvador Ramos. </p>
+                            <p>I got into angular pretty soon after I started programming and boy did it fuck with my brain. So much black magic.
+I haven &#39;t done much frontend stuff since and want to get into that again - so yeah& Prepare for yet another framework. I &#39;m sorry world.</p>
+                        </div>
+                    </div>
+                    <div class="footnote-definition">
+                        <sup id="footnote-2">
+                            <a href="#footnote-reference-2">2</a>
+                        </sup>
+                        <div class="footnote-body">
+                            <p>
+                                For more info, check e.g. <a href="https://docs.opencv.org/4.x/de/d37/group__objdetect__cascade__classifier.html">OpenCv Documentation</a>
+                                
+                            </p>
+                        </div>
+                    </div>
+                    <div class="footnote-definition">
+                        <sup id="footnote-3">
+                            <a href="#footnote-reference-3">3</a>
+                        </sup>
+                        <div class="footnote-body">
+                            <p>
+                                <a href="https://unix.stackexchange.com/questions/366797/grep-slow-to-exit-after-finding-match">https://unix.stackexchange.com/questions/366797/grep-slow-to-exit-after-finding-match</a>
+                                - so that &#39;s why pipes sometimes seem to get &#34;stuck &#34;- never thought about how things work. TIL.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Code injected by live-server -->
+<script type="text/javascript">
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function() {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					head.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					head.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function(msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			console.log('Live reload enabled.');
+		})();
+	}
+	// ]]>
+</script>
+</body>
+</html>
+
