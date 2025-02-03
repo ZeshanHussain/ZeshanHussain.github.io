@@ -123,19 +123,19 @@
 <span style="color:#ee8300">using namespace cv;</span>
 
 <span style="color:#711eb5"> 
-#include "<FL/Fl.H>"
-#include "<FL/Fl_Window.H>"
+#include "FL/Fl.H"
+#include "FL/Fl_Window.H"
 #include "darknet.hpp"
 #include "darknet_cfg_and_state.hpp"
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Toggle_Button.H>
-#include <opencv2/opencv.hpp>
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <iomanip>
-
+#include "FL/Fl_Box.H"
+#include "FL/Fl_Button.H"
+#include "FL/Fl_Toggle_Button.H"
+#include "opencv2/opencv.hpp"
+#include "iostream"
+#include "thread"
+#include "chrono"
+#include "iomanip"
+<span style="color:#ee8300">
 class WebcamWindow : public Fl_Window {
 private:
     Fl_Box* videoBox;
@@ -208,7 +208,7 @@ public:
 
         end();
     }
-
+<span style="color:#48a8e4">
     double estimate_camera_fps(cv::VideoCapture & cap) {
         std::cout << "Estimating FPS..." << std::endl;
 
