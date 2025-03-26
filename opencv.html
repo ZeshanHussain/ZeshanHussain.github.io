@@ -5,13 +5,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <link rel="stylesheet" href="/style.css" type="text/css"/>
         <title>Seeing Danger: How AI-Based Computer Vision Detects Firearms to Boost Security</title>
+        <style>
+            video {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 0 auto;
+            }
+        </style>
     </head>
     <body>
         <header class='header'>
             <a class="logo" href="index.html">home</a>
             <nav>
                 <a href="https://www.github.com/ZeshanHussain">github</a>
-                <a href="/about">about</a>
+                <a href="/about.html">about</a>
+                <a href="/resume.html" class="active">resume</a>
             </nav>
         </header>
         <div class="container">
@@ -29,33 +38,23 @@
                 </li>
             </ul>
             <p>
-                This is not just a project; it’s the foundation of a startup I’m building to revolutionize security solutions. The goal is to create an advanced AI-powered surveillance system capable of identifying and responding to potential threats in real-time. Using the Darknet framework, I built and trained a specialized neural network designed to detect active shooter scenarios with exceptional precision. By leveraging a convolutional neural network (CNN), this project is designed to enhance safety and reliability in real-world security applications.               <sup class="footnote-reference">
+                This is not just a project; it's the foundation of a startup I'm building to revolutionize security solutions. The goal is to create an advanced AI-powered surveillance system capable of identifying and responding to potential threats in real-time. Using the <a href="https://github.com/AlexeyAB/darknet" target="_blank">YOLO/Darknet framework</a>, I built and trained a specialized neural network designed to detect active shooter scenarios with exceptional precision. By leveraging a convolutional neural network (CNN), this project is designed to enhance safety and reliability in real-world security applications.               <sup class="footnote-reference">
                     <a id="footnote-reference-1" href="#footnote-1">1</a>
                 </sup>
                 
             </p>
             <hr>
-            <p>
-              
-            </p>
+            <h3 style="text-decoration: underline;">Technologies Used</h3>
             <ul>
-                <li>Technologies Used</li>
                 <li>YOLO/Darknet: High-performance convolutional neural network framework. </li>
-
- <li> DarkMark: Annotation and training tool for fine-tuning models. </li>
-
-<li> FlTK: Used FLTM framework to write C++-based GUI I engineered for minimal memory consumption. </li>
-
-<li> C++: Core programming language for the system’s backend. </li> 
-
-<li> HTML: For explaining my goal for this startup/project. </li>
-
-<li> Twilio Voice API: Facilitates instant voice alerts for critical situations. </li>
-
- 
+                <li> DarkMark: Annotation and training tool for fine-tuning models. </li>
+                <li> FlTK: Used FLTM framework to write C++-based GUI I engineered for minimal memory consumption. </li>
+                <li> C++: Core programming language for the system's backend. </li> 
+                <li> HTML: For explaining my goal for this startup/project. </li>
+                <li> Twilio Voice API: Facilitates instant voice alerts for critical situations. </li>
             </ul>
             <hr>
-            <p>Machine Leaning Model Active Shooter Detection</p>
+            <p>Machine Leaning Model that detects Active Shooter with 99% accuracy</p>
             <div class="src src-bash">
                 <div class="highlight">
                     <pre style="background-color:#fff;">
@@ -66,9 +65,10 @@
                                 <span>
 </span> 
 
-<video width="920" height="840" autoplay loop muted>
+<video width="100%" height="auto" playsinline autoplay loop muted controls>
     <source src="Hussain_Zeshan_Example.mp4" type="video/mp4" />
-  </video>
+    Your browser does not support the video tag.
+</video>
 
 
 
@@ -78,8 +78,9 @@
                             </span>
                             <span style="display:flex">
                                 
-                                <video width="920" height="840" autoplay loop muted>
+                                <video width="100%" height="auto" playsinline autoplay loop muted controls>
                                     <source src="Neural (1).mp4" type="video/mp4" />
+                                    Your browser does not support the video tag.
                                   </video>
                                       </span>
                             </span>
@@ -99,7 +100,7 @@
             </div>
             <p>How it works:</p>
             <ol>
-                <li>Collect Postive and Negative Datasets for Machine learning task</li>
+                <li>Trained millions of Postive and Negative Datasets for Machine learning task</li>
                 <li>After Training, deploy the model weights into the C++ program</li>
                 <li>My C++ program consists of using the OpenCV framework. Using this framework helped me create a clear goal for object detection.</li>
                 
@@ -433,4 +434,5 @@ int main(int argc, char* argv[]) {
 </script>
 </body>
 </html>
+
 
