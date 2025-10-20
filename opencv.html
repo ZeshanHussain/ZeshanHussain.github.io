@@ -54,49 +54,28 @@
                 <li> Twilio Voice API: Facilitates instant voice alerts for critical situations. </li>
             </ul>
             <hr>
-            <p>Machine Leaning Model that detects Active Shooter with 99% accuracy</p>
-            <div class="src src-bash">
-                <div class="highlight">
-                    <pre style="background-color:#fff;">
-                        <code>
-                          
-
-                            <span style="display:flex;">
-                                <span>
-</span> 
-
-<video width="100%" height="auto" playsinline autoplay loop muted controls>
-    <source src="Hussain_Zeshan_Example.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-</video>
-
-
-
- 
-
-
-                            </span>
-                            <span style="display:flex">
-                                
-                                <video width="100%" height="auto" playsinline autoplay loop muted controls>
-                                    <source src="Neural (1).mp4" type="video/mp4" />
-                                    Your browser does not support the video tag.
-                                  </video>
-                                      </span>
-                            </span>
-                            <span style="display:flex;">
-                                <span>
-                                    
-                                    
-                                </span>
-                              
-                            </span>
-                            <span style="display:flex;">
-                                <span>&gt;&gt;&gt;</span>
-                            </span>
-                        </code>
-                    </pre>
+            
+            <div style="margin: 2.5em 0; padding: 1.5em; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+                <h3 style="color: white; margin: 0 0 1em 0; text-align: center; font-size: 1.3em;">AI Detection in Action</h3>
+                <div style="position: relative; width: 100%; max-width: 900px; margin: 0 auto 2em auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <video width="100%" height="auto" playsinline autoplay loop muted controls style="display: block; border-radius: 8px;">
+                        <source src="Hussain_Zeshan_Example.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
                 </div>
+                <p style="color: rgba(255,255,255,0.9); text-align: center; margin: 0 0 1.5em 0; font-size: 0.9em; font-style: italic;">
+                    Real-time firearm detection with 99% accuracy
+                </p>
+                
+                <div style="position: relative; width: 100%; max-width: 900px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <video width="100%" height="auto" playsinline autoplay loop muted controls style="display: block; border-radius: 8px;">
+                        <source src="Neural (1).mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <p style="color: rgba(255,255,255,0.9); text-align: center; margin: 1em 0 0 0; font-size: 0.9em; font-style: italic;">
+                    Neural network training and validation results
+                </p>
             </div>
             <p>How it works:</p>
             <ol>
@@ -137,78 +116,88 @@
 #include "chrono"
 #include "iomanip"
 <span style="color:#ee8300">
-class WebcamWindow : public Fl_Window {
-private:
-    Fl_Box* videoBox;
-    cv::VideoCapture cap;
-    cv::Mat frame, resizedFrame;
-    Fl_RGB_Image* img;
-    bool stopFlag;
-    int argc;
-    char** argv;
-
-    // Neural network
-    Darknet::NetworkPtr net;
-
-    // FPS and statistics
-    double estimated_fps;
-    size_t frame_counter;
-    size_t total_objects_found;
-    std::chrono::high_resolution_clock::time_point timestamp_start;
-
-    // Top bar widgets
-    Fl_Box* topBar;
-    Fl_Button* exitButton;
-
-public:
-    WebcamWindow(int w, int h, const char* title, int argc, char** argv)
-        : Fl_Window(w, h, title), cap(0), img(nullptr), stopFlag(false), argc(argc), argv(argv),
-          frame_counter(0), total_objects_found(0) {
-        // Initialize the neural network
-        Darknet::Parms parms = Darknet::parse_arguments(argc, argv);
-        net = Darknet::load_neural_network(parms);
-
-        // Open and configure the camera
-        cap.open(0, cv::CAP_V4L2); // Use V4L2 backend for faster capture on Linux
-        cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);  // Lower resolution for faster processing
-        cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
-        cap.set(cv::CAP_PROP_FPS, 30);  // Set desired frame rate
-
-        // Estimate FPS
-        estimated_fps = estimate_camera_fps(cap);
-        timestamp_start = std::chrono::high_resolution_clock::now();
-
-        // Set a darker color scheme
-        Fl::scheme("gtk+");
-
-        // Set the window color
-        color(FL_DARK_YELLOW);
-
-        int frameWidth = w * 0.85;
-        int buttonWidth = w * 0.2;
-        int margin = 30;
-        int topBarHeight = 30;
-
-        // Create the top bar
-        topBar = new Fl_Box(0, 0, w, topBarHeight, "GuardianSafe");
-        topBar->box(FL_DOWN_BOX);
-        topBar->color(FL_DARK_MAGENTA);
-
-        // Create the exit button
-        exitButton = new Fl_Button(w - 34, 2.5, 30, 25, "X");
-        exitButton->box(FL_DOWN_BOX);
-        exitButton->color(FL_RED);
-        exitButton->callback([](Fl_Widget* widget, void* data) {
-            ((WebcamWindow*)data)->hide();
-        }, this);
-
-        videoBox = new Fl_Box(margin, topBarHeight + margin, frameWidth - 2 * margin, h - topBarHeight - 2 * margin);
-        videoBox->color(FL_BLACK);
-
-        resizedFrame = cv::Mat(videoBox->h(), videoBox->w(), CV_8UC3);
-
-        end();
-    }
+    class WebcamWindow : public Fl_Window {
+        private:
+            Fl_Box* videoBox; // Pointer to a box widget to display the video feed
+            cv::VideoCapture cap; // OpenCV object to capture video from the desired camera  
+            cv::Mat frame, resizedFrame; // Matrices to hold the current frame and the resized version of it for display
+            Fl_RGB_Image* img; // Pointer to an image object to hold the current frame for display the video frame in rhe GUI 
+            bool stopFlag; // Video Capture Flag
+            cv::VideoWriter videoWriter; 
+            bool isRecording; 
+            std::string currentVideoFile;
+        
+            std::string getTimestamp()
+            {
+                auto now = std::chrono::system_clock::now();
+                auto in_time_t = std::chrono::system_clock::to_time_t(now);
+                std::stringstream ss; 
+                ss << std::put_time(std::localtime(&in_time_t), "%Y%m%d_%H%M%S");
+                return ss.str();
+            }
+        void startRecording() {
+                currentVideoFile = "recording_" + getTimestamp() + ".avi";
+                int fourcc = cv::VideoWriter::fourcc('M','J','P','G'); // Motion-JPEG codec
+                double fps = estimated_fps;
+                cv::Size frameSize(cap.get(cv::CAP_PROP_FRAME_WIDTH), 
+                                  cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+                // button camera works
+                if(videoWriter.open(currentVideoFile, fourcc, fps, frameSize)) {
+                    isRecording = true;
+                    recordButton->label("Stop");
+                    recordButton->color(fl_rgb_color(255, 0, 0)); // Red when recording
+                    std::cout << "Recording started: " << currentVideoFile << std::endl;
+                } else {
+                    std::cerr << "Failed to initialize video writer!" << std::endl;
+                }
+            }
+        
+            void stopRecording()
+             {
+                isRecording = false; 
+                videoWriter.release(); 
+                recordButton->label("Record");
+                recordButton->color(fl_rgb_color(34, 139, 34)); // Original green color
+                std::cout << "Recording saved: " << currentVideoFile << std::endl;
+        
+             }
+             static void record_button_callback(Fl_Widget* widget, void* data)
+             {
+                WebcamWindow* win = static_cast<WebcamWindow*>(data);
+                if(!win->isRecording)
+                {
+                    win->startRecording();
+                } else {
+                    win->stopRecording();
+                }
+             }
+        
+        
+            // Neural network
+            Darknet::NetworkPtr net; // Pointer to the neural network object detection 
+        
+            // FPS and statistics
+            double estimated_fps;
+            size_t frame_counter;
+            size_t total_objects_found;
+            std::chrono::high_resolution_clock::time_point timestamp_start;
+        
+            // Top bar widgets
+            Fl_Box* topBar; // Pointer to the top bar widget
+            Fl_Button* exitButton; // Pointer to the exit button widget
+        
+            // Create the action button
+            Fl_Button* actionButton;
+            Fl_Button* alertButton; 
+            Fl_Button* settingsButton;
+            Fl_Button* recordButton;
+            Fl_Button* CameralistButton;
+            Fl_Button* viewButton;
+            // Strings for GuardiansafeAI Neural Network Model paths(cfg, names, weights)
+            const std::string MODEL_CFG = "/home/zeshan/src/darknet/src-examples/Shooter.cfg";
+            const std::string MODEL_NAMES = "/home/zeshan/src/darknet/src-examples/Shooter.names";
+            const std::string MODEL_WEIGHTS = "/home/zeshan/src/darknet/src-examples/Shooter_best.weights";
+        
 <span style="color:#48a8e4">
     double estimate_camera_fps(cv::VideoCapture & cap) {
         std::cout << "Estimating FPS..." << std::endl;
@@ -434,5 +423,4 @@ int main(int argc, char* argv[]) {
 </script>
 </body>
 </html>
-
 
