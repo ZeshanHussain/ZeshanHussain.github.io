@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="/style.css" type="text/css"/>
+        <title>ADS-B Tracker: Real-Time Aircraft and Rocket Tracking with GPS Navigation</title>
+        <style>
+            video {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin: 0 auto;
+            }
+            .tech-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5em;
+                margin: 2em 0;
+            }
+            .tech-card {
+                background: #f9f9f9;
+                padding: 1.5em;
+                border-radius: 8px;
+                border-left: 4px solid #fa6432;
+            }
+            .tech-card h4 {
+                margin: 0 0 0.5em 0;
+                color: #fa6432;
+            }
+            .tech-card p {
+                margin: 0.5em 0;
+                font-size: 0.9em;
+            }
+            @media (max-width: 768px) {
+                .tech-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header class='header'>
+            <a class="logo" href="index.html">home</a>
+            <nav>
+                <a href="https://www.github.com/ZeshanHussain">github</a>
+                <a href="/about.html">about</a>
+                <a href="/resume.html">resume</a>
+            </nav>
+        </header>
+        <div class="container">
+            <h1 class="title">
+                ADS-B Tracker: Real-Time Aircraft and Rocket Tracking with GPS Navigation
+                <br>
+                <span class="subtitle">Advanced tracking system with GUI interface and off-road GPS capabilities</span>
+            </h1>
+            <ul class="tags">
+                <li>
+                    <a href="/tags/c++">C++</a>
+                </li>
+                <li>
+                    <a href="/tags/ads-b">ADS-B</a>
+                </li>
+                <li>
+                    <a href="/tags/gps">GPS</a>
+                </li>
+                <li>
+                    <a href="/tags/qt">Qt/GUI</a>
+                </li>
+            </ul>
+            
+            <p>
+                I developed a sophisticated real-time tracking system that monitors aircraft and rockets using ADS-B (Automatic Dependent Surveillance-Broadcast) technology. This project combines aviation tracking with advanced GPS navigation capabilities, making it perfect for both tracking flights overhead and navigating off-road terrain. The system features a custom-built graphical user interface that displays live aircraft positions, flight paths, and detailed telemetry data in real-time.
+            </p>
+
+            <p>
+                ADS-B is the same technology used by air traffic control systems worldwide. Aircraft equipped with ADS-B transponders broadcast their position, altitude, velocity, and identification every second. My tracker receives these signals using an SDR (Software Defined Radio) and processes them to display comprehensive flight information. The system can track hundreds of aircraft simultaneously within a 200+ mile radius, providing real-time visualization on an interactive radar display.
+            </p>
+
+            <div style="margin: 2.5em 0; padding: 1.5em; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+                <h3 style="color: white; margin: 0 0 1em 0; text-align: center; font-size: 1.3em;">Real-Time Tracking System in Action</h3>
+                <div style="position: relative; width: 100%; max-width: 900px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <video width="100%" height="auto" playsinline autoplay loop muted controls style="display: block; border-radius: 8px;">
+                        <source src="radar.mp4" type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <p style="color: rgba(255,255,255,0.9); text-align: center; margin: 1em 0 0 0; font-size: 0.9em; font-style: italic;">
+                    Live aircraft tracking with ADS-B data visualization and GPS navigation interface
+                </p>
+            </div>
+
+            <hr>
+
+            <h2>System Overview</h2>
+
+            <p>
+                The tracker integrates multiple technologies to provide a comprehensive monitoring solution. The ADS-B receiver captures signals on 1090 MHz, decodes the data packets, and feeds them into my custom C++ application. The GUI displays aircraft on a map with real-time updates, showing flight numbers, altitudes, speeds, and trajectories. The integrated GPS system provides precise location tracking for ground navigation, making it invaluable for off-road adventures or field operations.
+            </p>
+
+            <hr>
+
+            <h3 style="text-decoration: underline;">Key Features</h3>
+            
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>ADS-B Reception</h4>
+                    <ul>
+                        <li>1090 MHz signal reception</li>
+                        <li>Real-time packet decoding</li>
+                        <li>200+ mile tracking range</li>
+                        <li>Multiple aircraft simultaneous tracking</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h4>Flight Data Display</h4>
+                    <ul>
+                        <li>Aircraft identification (callsign, flight number)</li>
+                        <li>Position (latitude, longitude, altitude)</li>
+                        <li>Velocity and heading information</li>
+                        <li>Vertical rate (climb/descent)</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h4>GPS Navigation</h4>
+                    <ul>
+                        <li>Precise location tracking</li>
+                        <li>Off-road terrain navigation</li>
+                        <li>Waypoint management</li>
+                        <li>Distance and bearing calculations</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h4>GUI Interface</h4>
+                    <ul>
+                        <li>Interactive radar display</li>
+                        <li>Real-time map visualization</li>
+                        <li>Customizable view settings</li>
+                        <li>Data logging and playback</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3 style="text-decoration: underline;">Technologies Used</h3>
+            <ul>
+                <li><strong>C++:</strong> Core programming language for high-performance signal processing and data handling</li>
+                <li><strong><a href="https://www.rtl-sdr.com/" target="_blank">RTL-SDR</a>:</strong> Software Defined Radio for receiving ADS-B signals on 1090 MHz</li>
+                <li><strong>Qt Framework:</strong> Cross-platform GUI development for the tracking interface</li>
+                <li><strong><a href="https://github.com/antirez/dump1090" target="_blank">dump1090</a>:</strong> ADS-B decoder for processing aircraft transponder signals</li>
+                <li><strong>GPS Libraries:</strong> NMEA protocol parsing for location services</li>
+                <li><strong>OpenStreetMap:</strong> Map tiles for visualization and terrain display</li>
+            </ul>
+
+            <hr>
+
+            <h2>How ADS-B Works</h2>
+
+            <p>
+                ADS-B is a surveillance technology where aircraft determine their position via satellite navigation and periodically broadcast it. This allows them to be tracked without requiring ground-based radar. The system operates on two frequencies:
+            </p>
+
+            <ul>
+                <li><strong>1090 MHz (1090ES):</strong> Used primarily by commercial aircraft and larger general aviation</li>
+                <li><strong>978 MHz (UAT):</strong> Used in the United States for smaller general aviation aircraft</li>
+            </ul>
+
+            <p>
+                My system focuses on 1090 MHz signals, which provide global coverage and include the majority of commercial air traffic. Each ADS-B message contains:
+            </p>
+
+            <ul>
+                <li><strong>ICAO 24-bit Address:</strong> Unique aircraft identifier</li>
+                <li><strong>Position Data:</strong> Latitude and longitude from GPS</li>
+                <li><strong>Altitude:</strong> Barometric or GPS-derived altitude</li>
+                <li><strong>Velocity:</strong> Ground speed and heading</li>
+                <li><strong>Callsign:</strong> Flight identification (e.g., UAL123)</li>
+                <li><strong>Vertical Rate:</strong> Rate of climb or descent</li>
+            </ul>
+
+            <hr>
+
+            <h2>GPS Navigation System</h2>
+
+            <p>
+                Beyond aircraft tracking, the system includes a robust GPS navigation module designed for off-road terrain. This feature is particularly useful for:
+            </p>
+
+            <ul>
+                <li><strong>Field Operations:</strong> Navigate to remote locations for optimal ADS-B reception</li>
+                <li><strong>Off-Road Adventures:</strong> Track your position in areas without cellular coverage</li>
+                <li><strong>Waypoint Management:</strong> Save and navigate to specific locations</li>
+                <li><strong>Data Correlation:</strong> Combine ground position with aircraft tracking for relative positioning</li>
+            </ul>
+
+            <p>
+                The GPS system uses NMEA 0183 protocol to communicate with GPS receivers, providing real-time position updates with sub-meter accuracy when using differential GPS corrections.
+            </p>
+
+            <hr>
+
+            <h2>GUI Architecture</h2>
+
+            <p>
+                The graphical interface is built using Qt, providing a responsive and intuitive user experience. The main components include:
+            </p>
+
+            <ul>
+                <li><strong>Radar Display:</strong> Circular or map-based view showing aircraft positions relative to your location</li>
+                <li><strong>Aircraft List:</strong> Tabular view of all tracked aircraft with sortable columns</li>
+                <li><strong>Detail Panel:</strong> Selected aircraft information including photos and flight history</li>
+                <li><strong>GPS Panel:</strong> Current position, speed, heading, and waypoint navigation</li>
+                <li><strong>Settings Panel:</strong> Configure SDR parameters, display options, and data logging</li>
+            </ul>
+
+            <hr>
+
+            <h2>Technical Implementation</h2>
+
+            <div class="src src-bash">
+                <div class="highlight">
+                    <pre style="background-color:#fff;">
+                        <code>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">&lt;QApplication&gt;</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">&lt;QMainWindow&gt;</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"adsb_decoder.hpp"</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"gps_handler.hpp"</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"radar_display.hpp"</span>
+
+<span style="color:#ee8300">class</span> <span style="color:#711eb5">TrackerWindow</span> : <span style="color:#ee8300">public</span> QMainWindow {
+    Q_OBJECT
+
+<span style="color:#ee8300">private</span>:
+    ADSBDecoder* adsbDecoder;
+    GPSHandler* gpsHandler;
+    RadarDisplay* radarWidget;
+    
+    <span style="color:#711eb5">// Aircraft tracking data</span>
+    QMap&lt;QString, AircraftData&gt; trackedAircraft;
+    
+<span style="color:#ee8300">public</span>:
+    TrackerWindow(QWidget *parent = nullptr) : QMainWindow(parent) {
+        <span style="color:#711eb5">// Initialize ADS-B decoder</span>
+        adsbDecoder = <span style="color:#ee8300">new</span> ADSBDecoder(<span style="color:#ee8300">this</span>);
+        connect(adsbDecoder, &ADSBDecoder::aircraftUpdated,
+                <span style="color:#ee8300">this</span>, &TrackerWindow::onAircraftUpdate);
+        
+        <span style="color:#711eb5">// Initialize GPS handler</span>
+        gpsHandler = <span style="color:#ee8300">new</span> GPSHandler(<span style="color:#ee8300">this</span>);
+        connect(gpsHandler, &GPSHandler::positionUpdated,
+                <span style="color:#ee8300">this</span>, &TrackerWindow::onGPSUpdate);
+        
+        <span style="color:#711eb5">// Setup radar display</span>
+        radarWidget = <span style="color:#ee8300">new</span> RadarDisplay(<span style="color:#ee8300">this</span>);
+        setCentralWidget(radarWidget);
+        
+        <span style="color:#711eb5">// Start receiving</span>
+        adsbDecoder->startReceiving();
+        gpsHandler->startTracking();
+    }
+
+<span style="color:#ee8300">private slots</span>:
+    <span style="color:#ee8300">void</span> onAircraftUpdate(<span style="color:#ee8300">const</span> AircraftData& aircraft) {
+        trackedAircraft[aircraft.icao] = aircraft;
+        radarWidget->updateAircraft(trackedAircraft);
+    }
+    
+    <span style="color:#ee8300">void</span> onGPSUpdate(<span style="color:#ee8300">const</span> GPSPosition& position) {
+        radarWidget->updateCenterPosition(position);
+    }
+};
+
+<span style="color:#ee8300">int</span> main(<span style="color:#ee8300">int</span> argc, <span style="color:#ee8300">char</span> *argv[]) {
+    QApplication app(argc, argv);
+    
+    TrackerWindow tracker;
+    tracker.setWindowTitle(<span style="color:#48a8e4">"ADS-B Tracker"</span>);
+    tracker.resize(1200, 800);
+    tracker.show();
+    
+    <span style="color:#ee8300">return</span> app.exec();
+}
+                        </code>
+                    </pre>
+                </div>
+            </div>
+
+            <hr>
+
+            <h2>Use Cases</h2>
+
+            <ul>
+                <li><strong>Aviation Enthusiasts:</strong> Track aircraft in your area, identify flight numbers, and monitor air traffic patterns</li>
+                <li><strong>Rocket Launch Tracking:</strong> Monitor rocket trajectories and telemetry during launches</li>
+                <li><strong>Research:</strong> Collect flight data for analysis of traffic patterns and airline operations</li>
+                <li><strong>Emergency Services:</strong> Track aerial resources during emergency operations</li>
+                <li><strong>Photography:</strong> Know when interesting aircraft will be overhead for aviation photography</li>
+                <li><strong>Off-Road Navigation:</strong> Use GPS features for hiking, camping, or field research</li>
+            </ul>
+
+            <hr>
+
+            <h2>Performance Characteristics</h2>
+
+            <ul>
+                <li><strong>Update Rate:</strong> Aircraft positions updated every 0.5-2 seconds</li>
+                <li><strong>Tracking Range:</strong> 200+ miles with elevated antenna</li>
+                <li><strong>Capacity:</strong> Handles 500+ aircraft simultaneously</li>
+                <li><strong>GPS Accuracy:</strong> ~3-5 meters horizontal accuracy</li>
+                <li><strong>Latency:</strong> Sub-second display refresh rate</li>
+            </ul>
+
+            <hr>
+
+            <h2>Future Enhancements</h2>
+
+            <ul>
+                <li><strong>MLAT (Multilateration):</strong> Calculate positions of non-ADS-B aircraft using multiple receivers</li>
+                <li><strong>Weather Integration:</strong> Display METAR/TAF weather data for airports</li>
+                <li><strong>Flight Prediction:</strong> Predict aircraft paths based on flight plans</li>
+                <li><strong>3D Visualization:</strong> Three-dimensional view showing altitude differences</li>
+                <li><strong>Network Mode:</strong> Share tracking data with other users via internet</li>
+                <li><strong>Mobile App:</strong> Companion smartphone application for remote monitoring</li>
+            </ul>
+
+            <hr>
+
+            <h2>Key Takeaways</h2>
+
+            <p>This project demonstrates:</p>
+
+            <ul>
+                <li><strong>Signal Processing:</strong> Real-time RF signal reception and decoding using SDR technology</li>
+                <li><strong>Protocol Implementation:</strong> ADS-B and NMEA protocol parsing and interpretation</li>
+                <li><strong>GUI Development:</strong> Complex Qt-based interface with real-time data visualization</li>
+                <li><strong>Data Management:</strong> Efficient handling of high-frequency position updates for multiple targets</li>
+                <li><strong>Integration:</strong> Combining aviation tracking with GPS navigation in a unified system</li>
+                <li><strong>Cartography:</strong> Map projection and coordinate system transformations</li>
+            </ul>
+
+            <p>
+                Building this ADS-B tracker provided deep insights into aviation systems, radio frequency technology, and real-time data processing. The combination of aircraft tracking and GPS navigation creates a versatile tool useful for both aviation monitoring and ground-based navigation in remote areas.
+            </p>
+
+        </div>
+    </body>
+</html>
+
