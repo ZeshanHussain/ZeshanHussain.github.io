@@ -30,53 +30,105 @@
             </ul>
             <p>
 		<a href="https://guardiansafeai.com/" target="_blank">GuardiansafeAI</a>
-            Receiving $5 million from an angel investor Q2 of next year ! After witnessing the devastating Uvalde shooting shortly after my high school graduation in May, I was deeply distressed. It was heartbreaking to see young lives filled with potential abruptly cut short. Motivated by the desire to make a difference, I dedicated my entire summer to seeking ways to prevent such tragedies. Eventually, I came up with an idea that could potentially save lives. My solution involves creating a camera that utilizes an AI model, a computer vision library, to detect firearms. When the camera detects an individual carrying a gun, it will immediately trigger an alarm and simultaneously contact local law enforcement. This system aims to provide students with valuable extra time to seek cover and increase their chances of survival. To develop this innovative technology, I undertook the task of training an AI model using over 60,000 images. Using a toy gun, I constructed my own Cascade model , which served as a starting point. However, for the model to be more accurate and reliable, it is crucial to train it with real firearms data. This is where I require the support and collaboration of the community. The process of creating AI Cascade models involves training a computer model with a vast dataset of images to teach it how to identify specific objects or features within those images. This intricate process entails breaking down the detection problem into smaller, simpler components and creating classifiers for each part. Ultimately, this model I trained are combined into a cascade to effectively detect the desired object—in this case, firearms.<sup class="footnote-reference">
+ After witnessing the devastating Uvalde shooting shortly after my high school graduation in May, I was deeply distressed. It was heartbreaking to see young lives filled with potential abruptly cut short. Motivated by the desire to make a difference, I dedicated my entire summer to seeking ways to prevent such tragedies. Eventually, I came up with an idea that could potentially save lives. My solution involves creating a camera that utilizes an AI model, a computer vision library, to detect firearms. When the camera detects an individual carrying a gun, it will immediately trigger an alarm and simultaneously contact local law enforcement. This system aims to provide students with valuable extra time to seek cover and increase their chances of survival. To develop this innovative technology, I undertook the task of training an AI model using over 60,000 images. Using a toy gun, I constructed my own Cascade model , which served as a starting point. However, for the model to be more accurate and reliable, it is crucial to train it with real firearms data. This is where I require the support and collaboration of the community. The process of creating AI Cascade models involves training a computer model with a vast dataset of images to teach it how to identify specific objects or features within those images. This intricate process entails breaking down the detection problem into smaller, simpler components and creating classifiers for each part. Ultimately, this model I trained are combined into a cascade to effectively detect the desired object—in this case, firearms.<sup class="footnote-reference">
                     <a id="footnote-reference-1" href="#footnote-1">1</a>
                 </sup>
                 
             </p>
             <hr>
-            <p>
-              
-            </p>
-            <ul>
-                
-            </ul>
-            <hr>
-             
-
-
-
-                                    
-
-                                    <span style="display:flex;">
-                                        <span>
-                                           
-                                        </span>
-                                    </span>
-                                    <span style="display:flex;">
-                                        <span>
-  
-                                        </span>
-                                    </span>
-                                    <span style="display:flex;">
-                                        <span>
-                                            
-                                        </span>
-                                    </span>
-                                </code>
-                            </pre>
-                        </div>
-                    </div>
-                    <p>
-                  
-            <p>For now it works well enough - lets build GuardiansafeAI.</p>
-          
             
+            <h2 style="margin-top: 3rem; margin-bottom: 1.5rem; text-align: center;">Application Interface</h2>
+            
+            <div class="gallery-container" style="max-width: 1200px; margin: 0 auto; padding: 2rem 0;">
+                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h54m28s_screenshot.png" alt="GuardianSafeAI Interface - Main Dashboard" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Main Dashboard Interface</p>
                         </div>
                     </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h54m46s_screenshot.png" alt="GuardianSafeAI Interface - Detection System" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Detection System</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h55m10s_screenshot.png" alt="GuardianSafeAI Interface - Alert Configuration" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Alert Configuration</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h55m47s_screenshot.png" alt="GuardianSafeAI Interface - Real-time Monitoring" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Real-time Monitoring</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h56m08s_screenshot.png" alt="GuardianSafeAI Interface - System Settings" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">System Settings</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h56m28s_screenshot.png" alt="GuardianSafeAI Interface - Analytics View" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem;">Analytics View</p>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
+
+            <!-- Image Modal -->
+            <div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.95); cursor: pointer;" onclick="closeImageModal()">
+                <span style="position: absolute; top: 20px; right: 40px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer;" onclick="closeImageModal()">&times;</span>
+                <img id="modalImage" style="margin: auto; display: block; max-width: 90%; max-height: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            </div>
+
+            <style>
+                .gallery-item:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+                }
+                
+                @media (max-width: 768px) {
+                    .gallery-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 1.5rem !important;
+                    }
+                }
+            </style>
+
+            <script>
+                function openImageModal(src) {
+                    document.getElementById('imageModal').style.display = 'block';
+                    document.getElementById('modalImage').src = src;
+                }
+                
+                function closeImageModal() {
+                    document.getElementById('imageModal').style.display = 'none';
+                }
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closeImageModal();
+                    }
+                });
+            </script>
+
+            <hr style="margin-top: 3rem;">
+
+            <p>For now it works well enough - let's build GuardianSafeAI.</p>
+            
         </div>
     <!-- Code injected by live-server -->
 <script type="text/javascript">
@@ -111,5 +163,4 @@
 </script>
 </body>
 </html>
-
 

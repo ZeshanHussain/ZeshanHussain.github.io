@@ -77,6 +77,124 @@
                     Neural network training and validation results
                 </p>
             </div>
+            
+            <hr style="margin: 3rem 0;">
+            
+            <h2 style="margin-bottom: 1.5rem; text-align: center; font-size: 1.8em;">Application Interface Gallery</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2.5rem;">
+                Explore the C++ GUI built with FLTK framework for real-time firearm detection and security monitoring
+            </p>
+            
+            <div class="gallery-container" style="max-width: 1200px; margin: 0 auto; padding: 0 1rem 2rem 1rem;">
+                <div class="gallery-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h54m28s_screenshot.png" alt="GuardianSafeAI C++ GUI - Main Dashboard" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem; font-weight: 500;">Main Dashboard Interface</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h54m46s_screenshot.png" alt="GuardianSafeAI C++ GUI - Detection System" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem; font-weight: 500;">Real-time Detection View</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h55m10s_screenshot.png" alt="GuardianSafeAI C++ GUI - Alert Configuration" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem; font-weight: 500;">Alert Configuration Panel</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h55m47s_screenshot.png" alt="GuardianSafeAI C++ GUI - Real-time Monitoring" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem; font-weight: 500;">Live Monitoring System</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h56m08s_screenshot.png" alt="GuardianSafeAI C++ GUI - System Settings" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem; font-weight: 500;">System Settings Control</p>
+                        </div>
+                    </div>
+                    
+                    <div class="gallery-item" style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; background: #fff;">
+                        <img src="250815_16h56m28s_screenshot.png" alt="GuardianSafeAI C++ GUI - Analytics Dashboard" style="width: 100%; height: auto; display: block; cursor: pointer;" onclick="openImageModal(this.src)">
+                        <div style="padding: 1rem; text-align: center;">
+                            <p style="margin: 0; color: #666; font-size: 0.9rem; font-weight: 500;">Analytics Dashboard</p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Image Modal -->
+            <div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.95); cursor: pointer;" onclick="closeImageModal()">
+                <span style="position: absolute; top: 20px; right: 40px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: color 0.3s;" onclick="closeImageModal()" onmouseover="this.style.color='#f5576c'" onmouseout="this.style.color='#fff'">&times;</span>
+                <img id="modalImage" style="margin: auto; display: block; max-width: 90%; max-height: 90%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 8px; box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);">
+            </div>
+
+            <style>
+                .gallery-item:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 12px 40px rgba(245, 87, 108, 0.25);
+                }
+                
+                .gallery-item img {
+                    transition: transform 0.3s ease;
+                }
+                
+                .gallery-item:hover img {
+                    transform: scale(1.02);
+                }
+                
+                @media (max-width: 768px) {
+                    .gallery-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 1.5rem !important;
+                    }
+                }
+                
+                #imageModal {
+                    animation: fadeIn 0.3s ease;
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+            </style>
+
+            <script>
+                function openImageModal(src) {
+                    const modal = document.getElementById('imageModal');
+                    const modalImg = document.getElementById('modalImage');
+                    modal.style.display = 'block';
+                    modalImg.src = src;
+                    document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
+                }
+                
+                function closeImageModal() {
+                    const modal = document.getElementById('imageModal');
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto'; // Re-enable scrolling
+                }
+                
+                // Close modal with Escape key
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        closeImageModal();
+                    }
+                });
+            </script>
+
+            <hr style="margin: 3rem 0;">
+            
             <p>How it works:</p>
             <ol>
                 <li>Trained millions of Postive and Negative Datasets for Machine learning task</li>
