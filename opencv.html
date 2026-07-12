@@ -221,229 +221,598 @@
 <span style="color:#ee8300">using namespace cv;</span>
 
 <span style="color:#711eb5"> 
-#include "FL/Fl.H"
-#include "FL/Fl_Window.H"
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Browser.H>
+#include <FL/Fl_Toggle_Button.H>
 #include "darknet.hpp"
 #include "darknet_cfg_and_state.hpp"
-#include "FL/Fl_Box.H"
-#include "FL/Fl_Button.H"
-#include "FL/Fl_Toggle_Button.H"
-#include "opencv2/opencv.hpp"
-#include "iostream"
-#include "thread"
-#include "chrono"
-#include "iomanip"
-<span style="color:#ee8300">
-    class WebcamWindow : public Fl_Window {
-        private:
-            Fl_Box* videoBox; // Pointer to a box widget to display the video feed
-            cv::VideoCapture cap; // OpenCV object to capture video from the desired camera  
-            cv::Mat frame, resizedFrame; // Matrices to hold the current frame and the resized version of it for display
-            Fl_RGB_Image* img; // Pointer to an image object to hold the current frame for display the video frame in rhe GUI 
-            bool stopFlag; // Video Capture Flag
-            cv::VideoWriter videoWriter; 
-            bool isRecording; 
-            std::string currentVideoFile;
-        
-            std::string getTimestamp()
-            {
-                auto now = std::chrono::system_clock::now();
-                auto in_time_t = std::chrono::system_clock::to_time_t(now);
-                std::stringstream ss; 
-                ss << std::put_time(std::localtime(&in_time_t), "%Y%m%d_%H%M%S");
-                return ss.str();
-            }
-        void startRecording() {
-                currentVideoFile = "recording_" + getTimestamp() + ".avi";
-                int fourcc = cv::VideoWriter::fourcc('M','J','P','G'); // Motion-JPEG codec
-                double fps = estimated_fps;
-                cv::Size frameSize(cap.get(cv::CAP_PROP_FRAME_WIDTH), 
-                                  cap.get(cv::CAP_PROP_FRAME_HEIGHT));
-                // button camera works
-                if(videoWriter.open(currentVideoFile, fourcc, fps, frameSize)) {
-                    isRecording = true;
-                    recordButton->label("Stop");
-                    recordButton->color(fl_rgb_color(255, 0, 0)); // Red when recording
-                    std::cout << "Recording started: " << currentVideoFile << std::endl;
-                } else {
-                    std::cerr << "Failed to initialize video writer!" << std::endl;
-                }
-            }
-        
-            void stopRecording()
-             {
-                isRecording = false; 
-                videoWriter.release(); 
-                recordButton->label("Record");
-                recordButton->color(fl_rgb_color(34, 139, 34)); // Original green color
-                std::cout << "Recording saved: " << currentVideoFile << std::endl;
-        
-             }
-             static void record_button_callback(Fl_Widget* widget, void* data)
-             {
-                WebcamWindow* win = static_cast<WebcamWindow*>(data);
-                if(!win->isRecording)
-                {
-                    win->startRecording();
-                } else {
-                    win->stopRecording();
-                }
-             }
-        
-        
-            // Neural network
-            Darknet::NetworkPtr net; // Pointer to the neural network object detection 
-        
-            // FPS and statistics
-            double estimated_fps;
-            size_t frame_counter;
-            size_t total_objects_found;
-            std::chrono::high_resolution_clock::time_point timestamp_start;
-        
-            // Top bar widgets
-            Fl_Box* topBar; // Pointer to the top bar widget
-            Fl_Button* exitButton; // Pointer to the exit button widget
-        
-            // Create the action button
-            Fl_Button* actionButton;
-            Fl_Button* alertButton; 
-            Fl_Button* settingsButton;
-            Fl_Button* recordButton;
-            Fl_Button* CameralistButton;
-            Fl_Button* viewButton;
-            // Strings for GuardiansafeAI Neural Network Model paths(cfg, names, weights)
-            const std::string MODEL_CFG = "/home/zeshan/src/darknet/src-examples/Shooter.cfg";
-            const std::string MODEL_NAMES = "/home/zeshan/src/darknet/src-examples/Shooter.names";
-            const std::string MODEL_WEIGHTS = "/home/zeshan/src/darknet/src-examples/Shooter_best.weights";
-        
-<span style="color:#48a8e4">
-    double estimate_camera_fps(cv::VideoCapture & cap) {
-        std::cout << "Estimating FPS..." << std::endl;
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/objdetect/objdetect.hpp>
+#include <filesystem>
+#include <iostream>
+#include <sstream>
+#include <thread>
+#include <chrono>
+#include <iomanip>
+#include <ctime>
+#include <vector>
+#include <mutex>
+#include <functional>
 
-        // Read and discard a few frames to allow the camera to stabilize
+namespace {
+const Fl_Color kBg = fl_rgb_color(28, 28, 28);
+const Fl_Color kPanel = fl_rgb_color(36, 36, 36);
+const Fl_Color kBorder = fl_rgb_color(46, 204, 64);
+const Fl_Color kTitleBar = fl_rgb_color(45, 45, 45);
+const Fl_Color kBtnDark = fl_rgb_color(48, 48, 48);
+const Fl_Color kCall911 = fl_rgb_color(200, 40, 40);
+const Fl_Color kAlerts = fl_rgb_color(110, 130, 55);
+const Fl_Color kSettings = fl_rgb_color(210, 175, 35);
+const Fl_Color kRecord = fl_rgb_color(40, 170, 55);
+const Fl_Color kWhite = fl_rgb_color(255, 255, 255);
+
+void styleOpsButton(Fl_Button* btn, Fl_Color fill) {
+    btn->box(FL_FLAT_BOX);
+    btn->color(fill);
+    btn->labelcolor(kWhite);
+    btn->labelfont(FL_HELVETICA_BOLD);
+    btn->labelsize(14);
+    btn->clear_visible_focus();
+}
+} // namespace
+
+class PlaybackWindow : public Fl_Window {
+private:
+    Fl_Box* titleBox;
+    Fl_Button* closeButton;
+    Fl_Browser* recordingsList;
+    Fl_Button* playButton;
+    Fl_Button* deleteButton;
+    std::vector<std::string> recordings;
+
+    void loadRecordings() {
+        recordings.clear();
+        recordingsList->clear();
+
+        for (const auto& entry : std::filesystem::directory_iterator(".")) {
+            const auto ext = entry.path().extension().string();
+            if (ext == ".mp4" || ext == ".avi") {
+                recordings.push_back(entry.path().string());
+                recordingsList->add(entry.path().filename().string().c_str());
+            }
+        }
+    }
+
+    static void playback_callback(Fl_Widget*, void* data) {
+        auto* win = static_cast<PlaybackWindow*>(data);
+        const int selected = win->recordingsList->value();
+        if (selected > 0 && selected <= static_cast<int>(win->recordings.size())) {
+            const std::string cmd = "xdg-open \"" + win->recordings[selected - 1] + "\"";
+            system(cmd.c_str());
+        }
+    }
+
+    static void delete_callback(Fl_Widget*, void* data) {
+        auto* win = static_cast<PlaybackWindow*>(data);
+        const int selected = win->recordingsList->value();
+        if (selected > 0 && selected <= static_cast<int>(win->recordings.size())) {
+            std::filesystem::remove(win->recordings[selected - 1]);
+            win->loadRecordings();
+        }
+    }
+
+public:
+    PlaybackWindow(int w, int h, const char* title)
+        : Fl_Window(w, h, title) {
+        color(kBg);
+        box(FL_FLAT_BOX);
+
+        titleBox = new Fl_Box(0, 0, w, 30, "PLAYBACK");
+        titleBox->box(FL_FLAT_BOX);
+        titleBox->color(kTitleBar);
+        titleBox->labelcolor(kWhite);
+        titleBox->labelfont(FL_HELVETICA_BOLD);
+        titleBox->labelsize(14);
+
+        Fl_Box* accent = new Fl_Box(0, 30, w, 3);
+        accent->box(FL_FLAT_BOX);
+        accent->color(kBorder);
+
+        closeButton = new Fl_Button(w - 34, 3, 28, 24, "X");
+        closeButton->box(FL_FLAT_BOX);
+        closeButton->color(kCall911);
+        closeButton->labelcolor(kWhite);
+        closeButton->labelsize(14);
+        closeButton->callback([](Fl_Widget*, void* data) {
+            static_cast<PlaybackWindow*>(data)->hide();
+        }, this);
+
+        recordingsList = new Fl_Browser(10, 44, w - 20, h - 100);
+        recordingsList->type(FL_HOLD_BROWSER);
+        recordingsList->textsize(14);
+        recordingsList->color(kPanel);
+        recordingsList->textcolor(kWhite);
+
+        playButton = new Fl_Button(10, h - 46, 100, 32, "PLAY");
+        styleOpsButton(playButton, fl_rgb_color(0, 140, 220));
+        playButton->callback(playback_callback, this);
+
+        deleteButton = new Fl_Button(120, h - 46, 100, 32, "DELETE");
+        styleOpsButton(deleteButton, kCall911);
+        deleteButton->callback(delete_callback, this);
+
+        loadRecordings();
+        end();
+    }
+
+    void refresh() { loadRecordings(); }
+};
+
+class CameraListWindow : public Fl_Window {
+private:
+    Fl_Browser* cameraList;
+    Fl_Button* selectButton;
+    Fl_Button* closeButton;
+    std::vector<int> cameraIndexes;
+    std::function<void(int)> onSelect;
+
+    void refreshCameras() {
+        cameraIndexes.clear();
+        cameraList->clear();
+
+        for (int i = 0; i < 10; ++i) {
+            cv::VideoCapture test(i, cv::CAP_V4L2);
+            if (test.isOpened()) {
+                cameraIndexes.push_back(i);
+                const std::string label = "/dev/video" + std::to_string(i);
+                cameraList->add(label.c_str());
+                test.release();
+            }
+        }
+    }
+
+    static void select_callback(Fl_Widget*, void* data) {
+        auto* win = static_cast<CameraListWindow*>(data);
+        const int selected = win->cameraList->value();
+        if (selected > 0 && selected <= static_cast<int>(win->cameraIndexes.size()) && win->onSelect) {
+            win->onSelect(win->cameraIndexes[selected - 1]);
+            win->hide();
+        }
+    }
+
+public:
+    CameraListWindow(int w, int h, std::function<void(int)> selectCb)
+        : Fl_Window(w, h, "Camera List"), onSelect(std::move(selectCb)) {
+        color(kBg);
+
+        Fl_Box* title = new Fl_Box(0, 0, w, 30, "CAMERA LIST");
+        title->box(FL_FLAT_BOX);
+        title->color(kTitleBar);
+        title->labelcolor(kWhite);
+        title->labelfont(FL_HELVETICA_BOLD);
+        title->labelsize(14);
+
+        Fl_Box* accent = new Fl_Box(0, 30, w, 3);
+        accent->box(FL_FLAT_BOX);
+        accent->color(kBorder);
+
+        closeButton = new Fl_Button(w - 34, 3, 28, 24, "X");
+        closeButton->box(FL_FLAT_BOX);
+        closeButton->color(kCall911);
+        closeButton->labelcolor(kWhite);
+        closeButton->callback([](Fl_Widget*, void* data) {
+            static_cast<CameraListWindow*>(data)->hide();
+        }, this);
+
+        cameraList = new Fl_Browser(10, 44, w - 20, h - 100);
+        cameraList->type(FL_HOLD_BROWSER);
+        cameraList->color(kPanel);
+        cameraList->textcolor(kWhite);
+        cameraList->textsize(14);
+
+        selectButton = new Fl_Button(10, h - 46, 120, 32, "SELECT");
+        styleOpsButton(selectButton, kRecord);
+        selectButton->callback(select_callback, this);
+
+        refreshCameras();
+        end();
+    }
+
+    void refresh() { refreshCameras(); }
+};
+
+class WebcamWindow : public Fl_Window {
+private:
+    Fl_Box* borderBox;
+    Fl_Box* videoBox;
+    cv::VideoCapture cap;
+    cv::Mat frame, resizedFrame;
+    Fl_RGB_Image* img;
+    bool stopFlag;
+    cv::VideoWriter videoWriter;
+    bool isRecording;
+    std::string currentVideoFile;
+    PlaybackWindow* playbackPopup;
+    CameraListWindow* cameraListPopup;
+    int currentCameraIndex;
+    std::mutex frameMutex;
+
+    Darknet::NetworkPtr net;
+    double estimated_fps;
+    size_t frame_counter;
+    size_t total_objects_found;
+    std::chrono::high_resolution_clock::time_point timestamp_start;
+
+    Fl_Box* topBar;
+    Fl_Button* exitButton;
+    Fl_Button* actionButton;
+    Fl_Button* alertButton;
+    Fl_Button* settingsButton;
+    Fl_Button* recordButton;
+    Fl_Button* CameralistButton;
+    Fl_Button* viewButton;
+    Fl_Button* playbackButton;
+
+    const std::string MODEL_CFG = "/home/zeshan/src/darknet/src-examples/Shooter.cfg";
+    const std::string MODEL_NAMES = "/home/zeshan/src/darknet/src-examples/Shooter.names";
+    const std::string MODEL_WEIGHTS = "/home/zeshan/src/darknet/src-examples/Shooter_best.weights";
+
+    std::string getTimestamp() {
+        const auto now = std::chrono::system_clock::now();
+        const auto in_time_t = std::chrono::system_clock::to_time_t(now);
+        std::stringstream ss;
+        ss << std::put_time(std::localtime(&in_time_t), "%Y%m%d_%H%M%S");
+        return ss.str();
+    }
+
+    void startRecording() {
+        currentVideoFile = "recording_" + getTimestamp() + ".avi";
+        const int fourcc = cv::VideoWriter::fourcc('M', 'J', 'P', 'G');
+        double fps = estimated_fps > 1.0 ? estimated_fps : 20.0;
+        const cv::Size frameSize(
+            static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH)),
+            static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
+
+        if (videoWriter.open(currentVideoFile, fourcc, fps, frameSize)) {
+            isRecording = true;
+            recordButton->label("STOP");
+            recordButton->color(kCall911);
+            recordButton->redraw();
+            std::cout << "Recording started: ./" << currentVideoFile << std::endl;
+        } else {
+            std::cerr << "Failed to initialize video writer!" << std::endl;
+        }
+    }
+
+    void stopRecording() {
+        isRecording = false;
+        videoWriter.release();
+        recordButton->label("RECORD");
+        recordButton->color(kRecord);
+        recordButton->redraw();
+        std::cout << "Recording saved: ./" << currentVideoFile << std::endl;
+    }
+
+    static void record_button_callback(Fl_Widget*, void* data) {
+        auto* win = static_cast<WebcamWindow*>(data);
+        if (!win->isRecording) {
+            win->startRecording();
+        } else {
+            win->stopRecording();
+        }
+    }
+
+    bool openCamera(int index) {
+        if (cap.isOpened()) {
+            cap.release();
+        }
+        if (!cap.open(index, cv::CAP_V4L2)) {
+            std::cerr << "Error: Could not open webcam index " << index << std::endl;
+            return false;
+        }
+        cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
+        cap.set(cv::CAP_PROP_FRAME_HEIGHT, 480);
+        cap.set(cv::CAP_PROP_FPS, 30);
+        currentCameraIndex = index;
+        std::cout << "Switched to camera /dev/video" << index << std::endl;
+        return true;
+    }
+
+public:
+    WebcamWindow(int w, int h, const char* title)
+        : Fl_Window(w, h, title),
+          img(nullptr),
+          stopFlag(false),
+          isRecording(false),
+          playbackPopup(nullptr),
+          cameraListPopup(nullptr),
+          currentCameraIndex(0),
+          frame_counter(0),
+          total_objects_found(0) {
+
+        Darknet::VStr args = {
+            MODEL_CFG,
+            MODEL_NAMES,
+            MODEL_WEIGHTS,
+            "--thresh", "0.5"
+        };
+        Darknet::Parms parms = Darknet::parse_arguments(args);
+        net = Darknet::load_neural_network(parms);
+
+        if (!openCamera(0)) {
+            throw std::runtime_error("webcam open failed");
+        }
+        estimated_fps = estimate_camera_fps(cap);
+        timestamp_start = std::chrono::high_resolution_clock::now();
+
+        Fl::scheme("gtk+");
+        color(kBg);
+        box(FL_FLAT_BOX);
+
+        const int border = 4;
+        const int topBarHeight = 36;
+        const int sidebarW = 220;
+        const int margin = 16;
+        const int btnH = 48;
+        const int btnGap = 14;
+
+        borderBox = new Fl_Box(0, 0, w, h);
+        borderBox->box(FL_BORDER_BOX);
+        borderBox->color(kBg);
+        borderBox->color2(kBorder);
+
+        // Green outline using thin boxes
+        Fl_Box* topEdge = new Fl_Box(0, 0, w, border);
+        topEdge->box(FL_FLAT_BOX);
+        topEdge->color(kBorder);
+        Fl_Box* bottomEdge = new Fl_Box(0, h - border, w, border);
+        bottomEdge->box(FL_FLAT_BOX);
+        bottomEdge->color(kBorder);
+        Fl_Box* leftEdge = new Fl_Box(0, 0, border, h);
+        leftEdge->box(FL_FLAT_BOX);
+        leftEdge->color(kBorder);
+        Fl_Box* rightEdge = new Fl_Box(w - border, 0, border, h);
+        rightEdge->box(FL_FLAT_BOX);
+        rightEdge->color(kBorder);
+
+        topBar = new Fl_Box(border, border, w - 2 * border, topBarHeight, "GUARDIANSAFE OPS CONSOLE v1.0.3");
+        topBar->box(FL_FLAT_BOX);
+        topBar->color(kTitleBar);
+        topBar->labelcolor(kWhite);
+        topBar->labelfont(FL_HELVETICA_BOLD);
+        topBar->labelsize(16);
+        topBar->align(FL_ALIGN_CENTER | FL_ALIGN_INSIDE);
+
+        Fl_Box* accentLine = new Fl_Box(border, border + topBarHeight, w - 2 * border, 3);
+        accentLine->box(FL_FLAT_BOX);
+        accentLine->color(kBorder);
+
+        exitButton = new Fl_Button(w - border - 34, border + 5, 28, 26, "X");
+        exitButton->box(FL_FLAT_BOX);
+        exitButton->color(kCall911);
+        exitButton->labelcolor(kWhite);
+        exitButton->labelfont(FL_HELVETICA_BOLD);
+        exitButton->labelsize(14);
+        exitButton->callback([](Fl_Widget*, void* data) {
+            static_cast<WebcamWindow*>(data)->hide();
+        }, this);
+
+        const int contentTop = border + topBarHeight + 3 + margin;
+        const int contentH = h - contentTop - border - margin;
+        const int videoW = w - 2 * border - sidebarW - 3 * margin;
+        const int sidebarX = border + margin + videoW + margin;
+
+        videoBox = new Fl_Box(border + margin, contentTop, videoW, contentH);
+        videoBox->box(FL_FLAT_BOX);
+        videoBox->color(FL_BLACK);
+        resizedFrame = cv::Mat(videoBox->h(), videoBox->w(), CV_8UC3);
+
+        int by = contentTop;
+        const int bw = sidebarW;
+
+        actionButton = new Fl_Button(sidebarX, by, bw, btnH, "CALL 911");
+        styleOpsButton(actionButton, kCall911);
+        actionButton->callback(button_callback, this);
+        by += btnH + btnGap;
+
+        alertButton = new Fl_Button(sidebarX, by, bw, btnH, "ALERTS");
+        styleOpsButton(alertButton, kAlerts);
+        alertButton->callback([](Fl_Widget*, void*) {
+            std::cout << "Alerts panel opened" << std::endl;
+        });
+        by += btnH + btnGap;
+
+        settingsButton = new Fl_Button(sidebarX, by, bw, btnH, "SETTINGS");
+        styleOpsButton(settingsButton, kSettings);
+        settingsButton->callback([](Fl_Widget*, void*) {
+            std::cout << "Settings opened" << std::endl;
+        });
+        by += btnH + btnGap;
+
+        recordButton = new Fl_Button(sidebarX, by, bw, btnH, "RECORD");
+        styleOpsButton(recordButton, kRecord);
+        recordButton->callback(record_button_callback, this);
+        by += btnH + btnGap;
+
+        CameralistButton = new Fl_Button(sidebarX, by, bw, btnH, "CAMERA LIST");
+        styleOpsButton(CameralistButton, kBtnDark);
+        CameralistButton->callback(camera_list_callback, this);
+        by += btnH + btnGap;
+
+        viewButton = new Fl_Button(sidebarX, by, bw, btnH, "CAMERA VIEW");
+        styleOpsButton(viewButton, kBtnDark);
+        viewButton->callback([](Fl_Widget*, void* data) {
+            auto* win = static_cast<WebcamWindow*>(data);
+            std::cout << "Camera view: /dev/video" << win->currentCameraIndex << std::endl;
+        }, this);
+        by += btnH + btnGap;
+
+        playbackButton = new Fl_Button(sidebarX, by, bw, btnH, "PLAYBACK");
+        styleOpsButton(playbackButton, kBtnDark);
+        playbackButton->callback(playback_button_callback, this);
+
+        end();
+    }
+
+    double estimate_camera_fps(cv::VideoCapture& capture) {
+        std::cout << "Estimating FPS..." << std::endl;
         cv::Mat mat;
         for (int i = 0; i < 5; i++) {
-            cap >> mat;
+            capture >> mat;
         }
 
-        // Estimate FPS by reading several consecutive frames
-        size_t frame_counter = 0;
+        size_t counted = 0;
         const auto ts1 = std::chrono::high_resolution_clock::now();
-        for (int i = 0; cap.isOpened() and i < 5; i++) {
-            cap >> mat;
+        for (int i = 0; capture.isOpened() && i < 5; i++) {
+            capture >> mat;
             if (!mat.empty()) {
-                frame_counter++;
+                counted++;
             }
         }
         const auto ts2 = std::chrono::high_resolution_clock::now();
-
-        const double actual_fps = static_cast<double>(frame_counter) / std::chrono::duration_cast<std::chrono::nanoseconds>(ts2 - ts1).count() * 1000000000.0;
-        return actual_fps;
+        const double ns = std::chrono::duration_cast<std::chrono::nanoseconds>(ts2 - ts1).count();
+        return static_cast<double>(counted) / ns * 1000000000.0;
     }
 
-    void drawAppleStyleText(cv::Mat& frame, const std::string& text, cv::Point position, double fontScale, int thickness) {
-        // Calculate the size of the text
+    void drawAppleStyleText(cv::Mat& imgFrame, const std::string& text, cv::Point position, double fontScale, int thickness) {
         int baseline = 0;
         cv::Size textSize = cv::getTextSize(text, cv::FONT_HERSHEY_SIMPLEX, fontScale, thickness, &baseline);
 
-        // Define the background rectangle for the text
         cv::Rect bgRect(
-            position.x, // X-coordinate of the top-left corner
-            position.y - textSize.height, // Y-coordinate of the top-left corner
-            textSize.width, // Width of the rectangle
-            textSize.height + baseline // Height of the rectangle
-        );
+            position.x,
+            position.y - textSize.height,
+            textSize.width + 8,
+            textSize.height + baseline + 6);
 
-        // Create a semi-transparent black background for the text
-        cv::Mat overlay = frame.clone();
-        cv::rectangle(overlay, bgRect, cv::Scalar(0, 0, 0), cv::FILLED); // Black rectangle
-        cv::addWeighted(overlay, 0.3, frame, 0.7, 0, frame); // Blend with the original frame (30% opacity)
-
-        // Draw the text with a subtle shadow
-        cv::putText(frame, text, position + cv::Point(2, 2), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness); // Shadow
-        cv::putText(frame, text, position, cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(255, 120, 255), thickness); // Main text
-    }
-
-    void updateFrame() {
-        if (!cap.read(frame)) {
-            std::cerr << "Error: Failed to capture frame!" << std::endl;
+        bgRect &= cv::Rect(0, 0, imgFrame.cols, imgFrame.rows);
+        if (bgRect.area() <= 0) {
             return;
         }
 
-        // Process the frame through the neural network
-        const auto results = Darknet::predict_and_annotate(net, frame);
+        cv::Mat overlay = imgFrame.clone();
+        cv::rectangle(overlay, bgRect, cv::Scalar(0, 0, 0), cv::FILLED);
+        cv::addWeighted(overlay, 0.35, imgFrame, 0.65, 0, imgFrame);
+
+        cv::putText(imgFrame, text, position + cv::Point(2, 2), cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(0, 0, 0), thickness);
+        cv::putText(imgFrame, text, position, cv::FONT_HERSHEY_SIMPLEX, fontScale, cv::Scalar(80, 255, 120), thickness);
+    }
+
+    void updateFrame() {
+        cv::Mat local;
+        {
+            std::lock_guard<std::mutex> lock(frameMutex);
+            if (!cap.read(local) || local.empty()) {
+                std::cerr << "Error: Failed to capture frame!" << std::endl;
+                return;
+            }
+        }
+
+        const auto results = Darknet::predict_and_annotate(net, local);
         total_objects_found += results.size();
 
-        // Calculate FPS
         const auto now = std::chrono::high_resolution_clock::now();
         const double elapsed_seconds = std::chrono::duration_cast<std::chrono::nanoseconds>(now - timestamp_start).count() / 1000000000.0;
-        const double current_fps = frame_counter / elapsed_seconds;
+        const double current_fps = frame_counter > 0 ? frame_counter / elapsed_seconds : 0.0;
 
-        // Prepare multi-line text
         std::stringstream stats;
         stats << "FPS: " << std::fixed << std::setprecision(1) << current_fps << "\n"
               << "Objects: " << total_objects_found << "\n"
-              << "Frame: " << frame_counter;
+              << "Elapsed seconds: " << static_cast<int>(elapsed_seconds);
 
-        // Split the text into lines
         std::vector<std::string> lines;
         std::string line;
         while (std::getline(stats, line, '\n')) {
             lines.push_back(line);
         }
 
-        // Render each line with Apple-style text
-        int y_offset = 30; // Starting Y position for the first line
+        int y_offset = 30;
         for (const auto& text_line : lines) {
-            drawAppleStyleText(frame, text_line, cv::Point(10, y_offset), 0.7, 2);
-            y_offset += 30; // Increment Y position for the next line
+            drawAppleStyleText(local, text_line, cv::Point(10, y_offset), 0.7, 2);
+            y_offset += 30;
         }
 
-        // Convert the frame to RGB for display
-        cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-        cv::resize(frame, resizedFrame, resizedFrame.size());
+        if (isRecording && videoWriter.isOpened()) {
+            videoWriter.write(local);
+        }
+
+        cv::cvtColor(local, local, cv::COLOR_BGR2RGB);
+        cv::resize(local, resizedFrame, resizedFrame.size());
 
         if (img) {
             delete img;
         }
         img = new Fl_RGB_Image(resizedFrame.data, resizedFrame.cols, resizedFrame.rows, 3);
-
         videoBox->image(img);
         videoBox->redraw();
-
         frame_counter++;
     }
 
     static void captureLoop(void* userdata) {
-        WebcamWindow* win = static_cast<WebcamWindow*>(userdata);
+        auto* win = static_cast<WebcamWindow*>(userdata);
         while (!win->stopFlag) {
             win->updateFrame();
             Fl::check();
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 30)); // Aim for 30 FPS
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 30));
         }
     }
 
     void startCapture() {
-        std::thread captureThread(captureLoop, this);
-        captureThread.detach();
+        std::thread(captureLoop, this).detach();
     }
 
     ~WebcamWindow() {
         stopFlag = true;
+        if (isRecording) {
+            stopRecording();
+        }
         if (img) {
             delete img;
         }
+        delete playbackPopup;
+        delete cameraListPopup;
         cap.release();
         Darknet::free_neural_network(net);
     }
+
+    static void button_callback(Fl_Widget*, void*) {
+        std::cout << "CALL 911 pressed" << std::endl;
+    }
+
+    static void playback_button_callback(Fl_Widget*, void* data) {
+        auto* win = static_cast<WebcamWindow*>(data);
+        if (!win->playbackPopup) {
+            win->playbackPopup = new PlaybackWindow(420, 520, "Playback");
+        }
+        win->playbackPopup->refresh();
+        win->playbackPopup->show();
+    }
+
+    static void camera_list_callback(Fl_Widget*, void* data) {
+        auto* win = static_cast<WebcamWindow*>(data);
+        if (!win->cameraListPopup) {
+            win->cameraListPopup = new CameraListWindow(360, 420, [win](int index) {
+                std::lock_guard<std::mutex> lock(win->frameMutex);
+                win->openCamera(index);
+                win->estimated_fps = win->estimate_camera_fps(win->cap);
+            });
+        }
+        win->cameraListPopup->refresh();
+        win->cameraListPopup->show();
+    }
 };
 
-int main(int argc, char* argv[]) {
-    WebcamWindow window(640, 480, "FLTK Webcam", argc, argv);
+int main() {
+    WebcamWindow window(1320, 860, "GuardianSafe Ops Console");
     window.show();
     window.startCapture();
     return Fl::run();
 }
+
 
 </span>
 
@@ -473,36 +842,9 @@ int main(int argc, char* argv[]) {
                     </div>
                     <p>
                   
-            <p>For now it works well enough - lets build :D</p>
+            <p>For now, lets build :D</p>
             <div id="outline-container-headline-1" class="outline-2">
-                <h2 id="headline-1">Footnotes
-</h2>
-            </div>
-            <div class="footnotes">
-                <hr class="footnotes-separatator">
-                <div class="footnote-definitions">
-                    <div class="footnote-definition">
-        
-                    <div class="footnote-definition">
-                        <sup id="footnote-2">
-                            <a href="#footnote-reference-2">2</a>
-                        </sup>
-                        <div class="footnote-body">
-                            <p>
-                                For more info, check e.g. <a href="https://docs.opencv.org/4.x/de/d37/group__objdetect__cascade__classifier.html">OpenCv Documentation</a>
-                                
-                            </p>
-                        </div>
-                    </div>
-                    <div class="footnote-definition">
-                        <sup id="footnote-3">
-                            <a href="#footnote-reference-3">3</a>
-                        </sup>
-                        <div class="footnote-body">
-                            <p>
-                                <a href="https://unix.stackexchange.com/questions/366797/grep-slow-to-exit-after-finding-match">https://unix.stackexchange.com/questions/366797/grep-slow-to-exit-after-finding-match</a>
-                                - so that &#39;s why pipes sometimes seem to get &#34;stuck &#34;- never thought about how things work. TIL.
-                            </p>
+
                         </div>
                     </div>
                 </div>
