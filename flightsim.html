@@ -1,0 +1,475 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <link rel="stylesheet" href="/style.css" type="text/css"/>
+        <title>Flight Simulator GUI: Physics-Based Aircraft Simulation with Real-Time Rendering</title>
+        <style>
+            .architecture-diagram {
+                background-color: #f5f5f5;
+                padding: 1.5em;
+                margin: 1em 0;
+                border-radius: 8px;
+                overflow-x: auto;
+            }
+            .architecture-diagram pre {
+                background-color: transparent;
+                border: none;
+                padding: 0;
+                margin: 0;
+                font-size: 0.75em;
+                line-height: 1.4;
+            }
+            .code-section {
+                margin: 2em 0;
+            }
+            .tech-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5em;
+                margin: 2em 0;
+            }
+            .tech-card {
+                background: #f9f9f9;
+                padding: 1.5em;
+                border-radius: 8px;
+                border-left: 4px solid #4300ec;
+            }
+            .tech-card h4 {
+                margin: 0 0 0.5em 0;
+                color: #4300ec;
+            }
+            .tech-card p {
+                margin: 0.5em 0;
+                font-size: 0.9em;
+            }
+            .equation {
+                background: #fff;
+                padding: 1em;
+                margin: 1em 0;
+                border-left: 3px solid #fa6432;
+                font-family: 'Courier New', monospace;
+            }
+            @media (max-width: 768px) {
+                .architecture-diagram pre {
+                    font-size: 0.6em;
+                }
+                .tech-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header class='header'>
+            <a class="logo" href="index.html">home</a>
+            <nav>
+                <a href="https://www.github.com/ZeshanHussain">github</a>
+                <a href="/about.html">about</a>
+                <a href="/resume.html">resume</a>
+            </nav>
+        </header>
+        <div class="container">
+            <h1 class="title">
+                Flight Simulator GUI: Physics-Based Aircraft Simulation with Real-Time Rendering
+                <br>
+                <span class="subtitle">A 60Hz physics engine with 6-DOF dynamics and ImGui instrumentation</span>
+            </h1>
+            <ul class="tags">
+                <li>
+                    <a href="/tags/c++">C++</a>
+                </li>
+                <li>
+                    <a href="/tags/opengl">OpenGL</a>
+                </li>
+                <li>
+                    <a href="/tags/imgui">ImGui</a>
+                </li>
+                <li>
+                    <a href="/tags/physics">Flight Dynamics</a>
+                </li>
+            </ul>
+
+            <p>
+                I've always wanted to build a flight sim from the ground up instead of just messing around in X-Plane, so over a few weeks I put one together in C++ with OpenGL and ImGui. The goal wasn't a pretty demo — I wanted the plane to actually fly like a plane, so I went with real 6-degree-of-freedom rigid body dynamics instead of faking the motion. Physics updates at a fixed 60 Hz using RK4 integration, which took me embarrassingly long to get right (more on that below).
+            </p>
+
+            <p>
+                For the cockpit I built out the standard "six-pack" of instruments — airspeed, altimeter, attitude indicator, heading, VSI, and turn coordinator — all drawn by hand with ImGui's DrawList API instead of using pre-made widgets, since I wanted them to actually look like gauges. There's also a first-person 3D view with an artificial horizon and a compass tape scrolling across the top.
+            </p>
+
+            <div style="margin: 2.5em 0; padding: 1.5em; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+                <h3 style="color: white; margin: 0 0 1em 0; text-align: center; font-size: 1.3em;">Flight Simulator in Action</h3>
+                <div style="position: relative; width: 100%; max-width: 900px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                    <iframe 
+    width="720" 
+    height="335" 
+    src="https://www.youtube.com/embed/VmB1BS0aFl0?autoplay=1&mute=1" 
+    title="YouTube video player" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+</iframe>
+
+                </div>
+                <p style="color: rgba(255,255,255,0.9); text-align: center; margin: 1em 0 0 0; font-size: 0.9em; font-style: italic;">
+                    Screen capture of the sim running — physics, gauges, and 3D view all live
+                </p>
+            </div>
+
+            <hr>
+            
+            <h2>How it's put together</h2>
+
+            <p>
+                I split things up so the physics doesn't know or care about how it's being drawn, which made debugging way easier — I could print raw state to the console without dealing with the render loop at all.
+            </p>
+            
+            <div class="architecture-diagram">
+                <pre>
+┌─────────────────────────────────────────────────────────┐
+│                     Main Loop (60 Hz)                    │
+│                      (main.cpp)                          │
+└────────────┬────────────────────────────┬────────────────┘
+             │                            │
+             ▼                            ▼
+    ┌────────────────┐          ┌─────────────────┐
+    │ Input Handler  │          │   Renderer      │
+    │                │          │  (OpenGL +      │
+    │ - Keyboard     │          │   ImGui)        │
+    │ - Controls     │          │                 │
+    └────────┬───────┘          └────────┬────────┘
+             │                           │
+             ▼                           │
+    ┌────────────────┐                  │
+    │    Aircraft    │◄─────────────────┘
+    │                │         (renders)
+    │ - State        │
+    │ - Properties   │
+    │ - Aero Coeff   │
+    └────────┬───────┘
+             │
+             ▼
+    ┌──────────────────┐
+    │ Flight Dynamics  │
+    │                  │
+    │ - Forces         │
+    │ - Moments        │
+    │ - RK4 Integration│
+    └────────┬─────────┘
+             │
+             ▼
+    ┌──────────────────┐
+    │   Atmosphere     │
+    │                  │
+    │ - ISA Model      │
+    │ - ρ, P, T, a     │
+    └──────────────────┘
+                </pre>
+            </div>
+
+            <h2>Data flow, one tick at a time</h2>
+            
+            <div class="architecture-diagram">
+                <pre>
+User Input ──► InputHandler ──► Aircraft State
+                                      │
+                                      ▼
+                            FlightDynamics.update()
+                                      │
+                    ┌─────────────────┴─────────────────┐
+                    │                                   │
+                    ▼                                   ▼
+            calculateForces()                  calculateMoments()
+                    │                                   │
+                    └─────────────────┬─────────────────┘
+                                      │
+                                      ▼
+                            RK4 Integration (4 steps)
+                                      │
+                                      ▼
+                          Update Aircraft State
+                                      │
+                    ┌─────────────────┴─────────────────┐
+                    │                                   │
+                    ▼                                   ▼
+            Instruments.render()              Renderer.render3D()
+                </pre>
+            </div>
+
+            <hr>
+
+            <h2>What's actually in it</h2>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>Aircraft Module</h4>
+                    <p>Holds everything about the plane's current state and aero properties.</p>
+                    <ul>
+                        <li>Position in NED frame (x, y, z)</li>
+                        <li>Velocity in body frame (u, v, w)</li>
+                        <li>Angular rates (p, q, r)</li>
+                        <li>Euler angles (roll, pitch, yaw)</li>
+                        <li>Control surfaces (elevator, aileron, rudder)</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h4>Flight Dynamics</h4>
+                    <p>Where the actual physics happens — this is the part I rewrote the most.</p>
+                    <ul>
+                        <li>Force calculations (lift, drag, thrust)</li>
+                        <li>Moment calculations (roll, pitch, yaw)</li>
+                        <li>4th-order Runge-Kutta integration</li>
+                        <li>Ground collision detection</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h4>Atmosphere Model</h4>
+                    <p>A simplified ISA model so air density actually changes with altitude.</p>
+                    <ul>
+                        <li>Temperature, pressure, density</li>
+                        <li>Speed of sound calculation</li>
+                        <li>Troposphere & stratosphere modeling</li>
+                        <li>Altitude-dependent properties</li>
+                    </ul>
+                </div>
+
+                <div class="tech-card">
+                    <h4>Instruments</h4>
+                    <p>The cockpit gauges, drawn frame by frame.</p>
+                    <ul>
+                        <li>Airspeed indicator (0-200 knots)</li>
+                        <li>Altimeter (0-10,000 feet)</li>
+                        <li>Attitude indicator (artificial horizon)</li>
+                        <li>Heading indicator (compass)</li>
+                        <li>Vertical speed indicator (±2000 fpm)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr>
+
+            <h3 style="text-decoration: underline;">Stack</h3>
+            <ul>
+                <li><strong>C++:</strong> needed the performance for the physics loop, and it forced me to actually think about memory layout for once</li>
+                <li><strong><a href="https://www.opengl.org/" target="_blank">OpenGL 3.3+</a>:</strong> handles the 3D rendering</li>
+                <li><strong><a href="https://www.glfw.org/" target="_blank">GLFW3</a>:</strong> window creation and input, does exactly what it says and nothing more</li>
+                <li><strong><a href="https://github.com/ocornut/imgui" target="_blank">ImGui</a>:</strong> I ended up using this for way more than I planned — it's what the instruments are built on</li>
+                <li><strong>CMake:</strong> build system, mostly so I could stop fighting with makefiles</li>
+            </ul>
+
+            <hr>
+
+            <h2>The aero model</h2>
+
+            <p>
+                This part took the most reading. I pulled together a standard 6-DOF model with linearized stability derivatives — basically the same approach you'd find in an intro flight dynamics textbook (I leaned on Etkin's <em>Dynamics of Flight</em> for a lot of this), scaled down to something I could actually implement in a semester's worth of spare time.
+            </p>
+
+            <div class="equation">
+                <strong>Forces (Body Frame):</strong><br>
+                X = -D·cos(α) + L·sin(α) + T - mg·sin(θ)<br>
+                Y = Y_side + mg·sin(φ)·cos(θ)<br>
+                Z = -D·sin(α) - L·cos(α) + mg·cos(φ)·cos(θ)
+            </div>
+
+            <div class="equation">
+                <strong>Moments (Body Frame):</strong><br>
+                L_roll  = ½ρV²S·b·Cl  (Rolling moment)<br>
+                M_pitch = ½ρV²S·c·Cm  (Pitching moment)<br>
+                N_yaw   = ½ρV²S·b·Cn  (Yawing moment)
+            </div>
+
+            <div class="equation">
+                <strong>Aerodynamic Coefficients:</strong><br>
+                CL = CL₀ + CLα·α + CLδe·δe<br>
+                CD = CD₀ + K·CL²<br>
+                Cm = Cm₀ + Cmα·α + Cmδe·δe + Cmq·q̂<br>
+                Cl = Clβ·β + Clδa·δa + Clδr·δr + Clp·p̂<br>
+                Cn = Cnβ·β + Cnδa·δa + Cnδr·δr + Cnr·r̂
+            </div>
+
+            <h2>Why RK4</h2>
+
+            <p>
+                My first pass used plain Euler integration and, predictably, the plane would slowly gain energy out of nowhere and spiral off into space if I left it running for a couple minutes. Switched to 4th-order Runge-Kutta and that drift basically disappeared. It's more math per timestep, but at 60 Hz it's not even close to a bottleneck, and it's what actual flight sim software uses for the same reason.
+            </p>
+
+            <div class="equation">
+                k₁ = f(t, y)<br>
+                k₂ = f(t + dt/2, y + k₁·dt/2)<br>
+                k₃ = f(t + dt/2, y + k₂·dt/2)<br>
+                k₄ = f(t + dt, y + k₃·dt)<br>
+                <br>
+                y_new = y + (k₁ + 2k₂ + 2k₃ + k₄)·dt/6
+            </div>
+
+            <p>Why it's worth the extra code:</p>
+            <ul>
+                <li>4th order accuracy, error scales with O(dt⁵)</li>
+                <li>Stays stable at a normal timestep (dt = 1/60 sec)</li>
+                <li>No slow drift building up over a long flight, unlike Euler</li>
+            </ul>
+
+            <hr>
+
+            <h2>Controls</h2>
+
+            <div class="architecture-diagram">
+                <pre>
+Keyboard        →    Aircraft Control
+──────────────────────────────────────
+W/S, ↑/↓        →    Elevator (pitch)
+A/D, ←/→        →    Aileron (roll)
+Q/E             →    Rudder (yaw)
+Z/X, PgUp/PgDn  →    Throttle
+Space           →    Center controls
+P               →    Pause/Resume
+R               →    Reset
+ESC             →    Exit
+                </pre>
+            </div>
+
+            <h2>Coordinate frames</h2>
+
+            <p>
+                Two frames of reference get used throughout, and honestly getting the sign conventions consistent between them was one of the more annoying bugs to track down.
+            </p>
+
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <h4>NED (North-East-Down)</h4>
+                    <p>Inertial reference frame</p>
+                    <div class="architecture-diagram">
+                        <pre>
+     North (x)
+       ↑
+       │
+       │
+       └────► East (y)
+      ╱
+     ╱
+    ↓ Down (z)
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <h4>Body Frame</h4>
+                    <p>Aircraft-fixed reference</p>
+                    <div class="architecture-diagram">
+                        <pre>
+     Forward (x)
+       ↑
+       │ (nose)
+       │
+       └────► Right (y)
+      ╱
+     ╱
+    ↓ Down (z)
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <p>Going between the two just means building the rotation matrix R(φ,θ,ψ) from the current Euler angles.</p>
+
+            <hr>
+
+            <h2>Some numbers</h2>
+
+            <ul>
+                <li><strong>Simulation Rate:</strong> 60 Hz (16.67 ms timestep)</li>
+                <li><strong>Render Rate:</strong> capped by vsync, usually sits at 60 FPS</li>
+                <li><strong>Integration:</strong> RK4, fixed timestep</li>
+                <li><strong>Total Lines of Code:</strong> around 2,500 lines of C++, give or take</li>
+            </ul>
+
+            <div class="code-section">
+                <div class="src src-bash">
+                    <div class="highlight">
+                        <pre style="background-color:#fff;">
+                            <code>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"aircraft.hpp"</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"flight_dynamics.hpp"</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"renderer.hpp"</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">"input_handler.hpp"</span>
+<span style="color:#4300ec">#include</span> <span style="color:#48a8e4">&lt;chrono&gt;</span>
+
+<span style="color:#ee8300">int</span> main() {
+    <span style="color:#711eb5">// Initialize systems</span>
+    Renderer renderer;
+    Aircraft aircraft;
+    FlightDynamics dynamics(&aircraft);
+    InputHandler input(&aircraft);
+    
+    <span style="color:#711eb5">// Main loop at 60 Hz</span>
+    <span style="color:#ee8300">const double</span> dt = 1.0 / 60.0;
+    <span style="color:#ee8300">double</span> accumulator = 0.0;
+    
+    <span style="color:#ee8300">auto</span> lastTime = std::chrono::high_resolution_clock::now();
+    
+    <span style="color:#ee8300">while</span> (!renderer.shouldClose()) {
+        <span style="color:#ee8300">auto</span> currentTime = std::chrono::high_resolution_clock::now();
+        <span style="color:#ee8300">double</span> frameTime = std::chrono::duration&lt;<span style="color:#ee8300">double</span>&gt;(
+            currentTime - lastTime).count();
+        lastTime = currentTime;
+        
+        accumulator += frameTime;
+        
+        <span style="color:#711eb5">// Physics update with fixed timestep</span>
+        <span style="color:#ee8300">while</span> (accumulator >= dt) {
+            input.processInput();
+            dynamics.update(dt);
+            accumulator -= dt;
+        }
+        
+        <span style="color:#711eb5">// Render frame</span>
+        renderer.render(aircraft);
+    }
+    
+    <span style="color:#ee8300">return</span> 0;
+}
+                            </code>
+                        </pre>
+                    </div>
+                </div>
+            </div>
+
+            <h2>What I'd add next</h2>
+
+            <p>If I keep working on this, here's the list I keep coming back to:</p>
+
+            <ul>
+                <li><strong>Weather:</strong> wind and turbulence would make the flying feel a lot less sterile</li>
+                <li><strong>Navigation:</strong> waypoint following, maybe basic GPS-style nav</li>
+                <li><strong>Autopilot:</strong> simple PID loops for altitude, heading, and airspeed hold</li>
+                <li><strong>More aircraft:</strong> swap in different stability derivatives for different planes</li>
+                <li><strong>Terrain:</strong> an actual 3D terrain mesh instead of a flat ground plane</li>
+            </ul>
+
+            <hr>
+
+            <h2>What I got out of this</h2>
+
+            <p>This was basically my crash course in:</p>
+
+            <ul>
+                <li><strong>Rigid body dynamics:</strong> actually implementing 6-DOF equations of motion instead of just reading them off a slide</li>
+                <li><strong>Numerical integration:</strong> why RK4 beats Euler, not just in theory but watching it happen on screen</li>
+                <li><strong>Real-time loops:</strong> fixed-timestep game loop with an accumulator, so physics stays consistent no matter what the framerate is doing</li>
+                <li><strong>OpenGL:</strong> the rendering pipeline and camera math, learned mostly by breaking it first</li>
+                <li><strong>Immediate-mode GUI:</strong> building custom instrument widgets instead of relying on premade ones</li>
+                <li><strong>Structuring a bigger codebase:</strong> keeping physics, rendering, and input from turning into a tangled mess</li>
+            </ul>
+
+            <p>
+                Honestly the hardest part wasn't any single piece of math — it was getting all the coordinate frames, sign conventions, and unit systems to agree with each other. But watching the plane actually respond correctly to control inputs for the first time, after a lot of debugging sessions that ended with the aircraft spinning into the ground, was a pretty good payoff.
+            </p>
+
+        </div>
+    </body>
+</html>
